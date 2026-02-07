@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>衛哨守則測驗系統 v3.0</title>
+    <title>衛哨守則-強化練習版</title>
     <style>
-        :root { --primary: #2c3e50; --secondary: #27ae60; --error: #e74c3c; }
+        :root { --primary: #2c3e50; --secondary: #27ae60; --error: #e74c3c; --accent: #f39c12; }
         body { font-family: "Microsoft JhengHei", sans-serif; background: #f0f2f5; margin: 0; padding: 10px; display: flex; flex-direction: column; align-items: center; }
         .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 100%; max-width: 600px; margin-bottom: 15px; box-sizing: border-box; }
         .header { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 600px; padding: 10px; }
@@ -13,22 +13,22 @@
         .m-btn { border: none; padding: 6px 12px; border-radius: 16px; cursor: pointer; font-size: 14px; background: none; }
         .m-btn.active { background: var(--primary); color: white; }
         .menu-btn { width: 100%; padding: 12px; margin: 8px 0; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; background: var(--primary); color: white; }
+        .special-btn { background: var(--accent); color: white; }
         .q-title { font-weight: bold; color: #2c3e50; margin-bottom: 8px; border-left: 4px solid var(--primary); padding-left: 8px; }
         .blank-input { border: none; border-bottom: 2px solid #95a5a6; width: 100px; text-align: center; font-size: 16px; color: var(--error); margin: 0 4px; outline: none; }
         .full-input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-size: 16px; margin-top: 5px; }
         .feedback { margin-top: 8px; padding: 10px; border-radius: 6px; font-size: 14px; line-height: 1.5; }
         .is-right { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
         .is-wrong { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-        .score-box { font-size: 24px; font-weight: bold; color: var(--secondary); text-align: center; padding: 20px; }
         .hidden { display: none; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+        .q-select-list { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        .small-btn { padding: 8px; font-size: 12px; background: #ecf0f1; border: 1px solid #bdc3c7; border-radius: 5px; cursor: pointer; }
     </style>
 </head>
 <body>
 
 <div class="header">
-    <h2 id="sys-title">衛哨練習</h2>
+    <h2 id="sys-title">衛哨測驗</h2>
     <div class="mode-toggle">
         <button id="p-mode" class="m-btn active" onclick="switchMainMode('practice')">練習</button>
         <button id="e-mode" class="m-btn" onclick="switchMainMode('exam')">考試</button>
@@ -37,34 +37,25 @@
 
 <div id="main-menu" class="card">
     <div id="practice-options">
-        <button class="menu-btn" onclick="initQuiz('fill', 0.4)">填空練習 (普通)</button>
-        <button class="menu-btn" onclick="initQuiz('fill', 0.8)">填空練習 (困難)</button>
-        <button class="menu-btn" onclick="initQuiz('dict', 0)">默寫練習 (不限時)</button>
+        <button class="menu-btn" onclick="initQuiz('fill', 0.5)">隨機填空練習</button>
+        <button class="menu-btn" onclick="initQuiz('dict', 0)">全內容默寫練習</button>
+        <hr>
+        <h3 style="margin-top:10px;">特定題目精修 (答對才能過)</h3>
+        <div class="q-select-list" id="specific-list"></div>
     </div>
     <div id="exam-options" class="hidden">
-        <p style="text-align: center; color: #666;">考試模式會計算總分並可儲存成績</p>
         <button class="menu-btn" style="background:#e67e22" onclick="initQuiz('fill', 0.6, true)">正式測驗：填空題</button>
         <button class="menu-btn" style="background:#e67e22" onclick="initQuiz('dict', 0, true)">正式測驗：默寫題</button>
     </div>
-    <hr>
-    <h3>歷史成績</h3>
-    <table id="history">
-        <thead><tr><th>姓名</th><th>分數</th><th>日期</th></tr></thead>
-        <tbody id="history-body"></tbody>
-    </table>
 </div>
 
 <div id="quiz-area" class="card hidden">
     <div id="quiz-list"></div>
-    <button id="submit-btn" class="menu-btn" style="background:var(--secondary)">繳卷 / 對答案</button>
-    <div id="final-result" class="hidden">
-        <div id="total-score" class="score-box"></div>
-        <div id="save-form">
-            <input type="text" id="user-name" class="full-input" placeholder="輸入姓名儲存成績" style="margin-bottom:10px">
-            <button class="menu-btn" onclick="saveRecord()">儲存成績</button>
-        </div>
+    <div style="display: flex; gap: 10px;">
+        <button id="submit-btn" class="menu-btn" style="background:var(--secondary); flex: 2;">送出答案</button>
+        <button id="retry-btn" class="menu-btn hidden" style="background:var(--accent); flex: 2;">再試一次</button>
     </div>
-    <button class="menu-btn" style="background:#95a5a6" onclick="location.reload()">返回主選單</button>
+    <button id="back-btn" class="menu-btn" style="background:#95a5a6" onclick="location.reload()">返回主選單</button>
 </div>
 
 <script>
@@ -79,99 +70,99 @@
         {q: "衛哨兵之定義為何?", keys: ["營區內", "警戒任務", "營區外", "警戒人員"], raw: "衛兵:凡在營區內之地區，擔任警戒任務人員。哨兵:在營區外，擔任警戒人員。", w: 10}
     ];
 
-    let currentMode = 'practice'; 
-    let finalScore = 0;
+    let focusIdx = -1; // -1 表示全部練習
 
     function switchMainMode(mode) {
-        currentMode = mode;
         document.getElementById('p-mode').classList.toggle('active', mode==='practice');
         document.getElementById('e-mode').classList.toggle('active', mode==='exam');
         document.getElementById('practice-options').classList.toggle('hidden', mode==='exam');
         document.getElementById('exam-options').classList.toggle('hidden', mode==='practice');
-        document.getElementById('sys-title').innerText = mode === 'practice' ? '衛哨練習' : '衛哨考試';
     }
 
-    function initQuiz(type, rate, isOfficial = false) {
+    function initQuiz(type, rate, isOfficial = false, singleIdx = -1) {
+        focusIdx = singleIdx;
         document.getElementById('main-menu').classList.add('hidden');
         document.getElementById('quiz-area').classList.remove('hidden');
         const list = document.getElementById('quiz-list');
         list.innerHTML = "";
 
-        data.forEach((item, idx) => {
+        // 決定顯示哪些題目
+        const targets = (singleIdx === -1) ? data : [data[singleIdx]];
+
+        targets.forEach((item, localIdx) => {
+            let actualIdx = (singleIdx === -1) ? localIdx : singleIdx;
             let content = "";
             if (type === 'fill') {
                 let tempText = item.raw;
-                // 用關鍵字進行挖空
                 item.keys.forEach(k => {
-                    if (Math.random() < rate || isOfficial) {
-                        tempText = tempText.replace(k, ` <input type="text" class="blank-input" data-ans="${k}" data-q="${idx}"> `);
-                    }
+                    tempText = tempText.replace(k, ` <input type="text" class="blank-input" data-ans="${k}" data-q="${actualIdx}"> `);
                 });
                 content = `<div style="line-height:2;">${tempText}</div>`;
             } else {
-                content = `<textarea class="full-input" rows="3" data-q="${idx}" placeholder="請在此默寫答案..."></textarea>`;
+                content = `<textarea class="full-input" rows="4" data-q="${actualIdx}" placeholder="請在此默寫..."></textarea>`;
             }
 
             list.innerHTML += `
                 <div class="q-block" style="margin-bottom:20px;">
-                    <div class="q-title">${idx+1}. ${item.q} (${item.w}%)</div>
+                    <div class="q-title">${actualIdx+1}. ${item.q}</div>
                     ${content}
-                    <div id="fb-${idx}" class="feedback hidden"></div>
+                    <div id="fb-${actualIdx}" class="feedback hidden"></div>
                 </div>`;
         });
         
+        document.getElementById('submit-btn').classList.remove('hidden');
+        document.getElementById('retry-btn').classList.add('hidden');
         document.getElementById('submit-btn').onclick = () => checkAnswers(type, isOfficial);
     }
 
     function checkAnswers(type, isOfficial) {
-        let total = 0;
-        data.forEach((item, idx) => {
+        let allCorrect = true;
+        const targets = (focusIdx === -1) ? data.map((_, i) => i) : [focusIdx];
+
+        targets.forEach(idx => {
             const fb = document.getElementById(`fb-${idx}`);
             const inputs = document.querySelectorAll(`[data-q="${idx}"]`);
-            let correctCount = 0;
-            let totalPossible = inputs.length;
+            const item = data[idx];
+            let isPassed = true;
 
             if (type === 'fill') {
-                inputs.forEach(input => {
-                    if (input.value.trim() === input.dataset.ans) correctCount++;
-                });
+                inputs.forEach(input => { if (input.value.trim() !== input.dataset.ans) isPassed = false; });
             } else {
-                // 默寫模式：判斷是否有「意思到」
                 const userVal = inputs[0].value.trim();
-                totalPossible = item.keys.length;
-                item.keys.forEach(k => {
-                    if (userVal.includes(k)) correctCount++;
-                });
+                item.keys.forEach(k => { if (!userVal.includes(k)) isPassed = false; });
             }
 
-            const isPassed = correctCount === totalPossible;
-            fb.innerHTML = isPassed ? "✅ 完全正確！" : `❌ 漏掉或錯誤。正確完整答案：<br><b>${item.raw}</b>`;
+            fb.innerHTML = isPassed ? "✅ 正確！" : `❌ 錯誤。請再試一次或參考正確答案：<br><b>${item.raw}</b>`;
             fb.className = `feedback ${isPassed ? 'is-right' : 'is-wrong'}`;
             fb.classList.remove('hidden');
-            
-            if (isPassed) total += item.w;
+            if (!isPassed) allCorrect = false;
         });
 
-        finalScore = total;
-        document.getElementById('submit-btn').classList.add('hidden');
-        document.getElementById('final-result').classList.remove('hidden');
-        document.getElementById('total-score').innerText = `總分：${total}`;
-        if (!isOfficial) document.getElementById('save-form').classList.add('hidden');
+        if (!allCorrect && focusIdx !== -1) {
+            // 如果是特定題目練習且答錯，切換按鈕
+            document.getElementById('submit-btn').classList.add('hidden');
+            document.getElementById('retry-btn').classList.remove('hidden');
+            document.getElementById('retry-btn').onclick = () => {
+                // 清除答案重新嘗試
+                document.querySelectorAll('.blank-input, .full-input').forEach(i => i.value = "");
+                document.querySelectorAll('.feedback').forEach(f => f.classList.add('hidden'));
+                document.getElementById('submit-btn').classList.remove('hidden');
+                document.getElementById('retry-btn').classList.add('hidden');
+            };
+        } else if (allCorrect && focusIdx !== -1) {
+            alert("恭喜答對！這題你已經熟練了。");
+        }
     }
 
-    function saveRecord() {
-        const name = document.getElementById('user-name').value || "無名氏";
-        const records = JSON.parse(localStorage.getItem('guard_scores') || "[]");
-        records.unshift({name, score: finalScore, date: new Date().toLocaleDateString()});
-        localStorage.setItem('guard_scores', JSON.stringify(records.slice(0, 10)));
-        location.reload();
-    }
-
+    // 初始化特定題目列表
     window.onload = () => {
-        const records = JSON.parse(localStorage.getItem('guard_scores') || "[]");
-        const body = document.getElementById('history-body');
-        records.forEach(r => {
-            body.innerHTML += `<tr><td>${r.name}</td><td>${r.score}</td><td>${r.date}</td></tr>`;
+        const specList = document.getElementById('specific-list');
+        data.forEach((item, idx) => {
+            const btn = document.createElement('button');
+            btn.className = 'small-btn';
+            btn.innerText = `練第 ${idx+1} 題`;
+            btn.onclick = () => initQuiz('dict', 0, false, idx);
+            specList.appendChild(btn);
         });
     };
 </script>
