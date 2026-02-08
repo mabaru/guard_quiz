@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>衛哨守則-強化練習版</title>
+    <title>衛哨守則-精準優化版</title>
     <style>
         :root { --primary: #2c3e50; --secondary: #27ae60; --error: #e74c3c; --accent: #f39c12; }
         body { font-family: "Microsoft JhengHei", sans-serif; background: #f0f2f5; margin: 0; padding: 10px; display: flex; flex-direction: column; align-items: center; }
@@ -13,7 +13,6 @@
         .m-btn { border: none; padding: 6px 12px; border-radius: 16px; cursor: pointer; font-size: 14px; background: none; }
         .m-btn.active { background: var(--primary); color: white; }
         .menu-btn { width: 100%; padding: 12px; margin: 8px 0; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; background: var(--primary); color: white; }
-        .special-btn { background: var(--accent); color: white; }
         .q-title { font-weight: bold; color: #2c3e50; margin-bottom: 8px; border-left: 4px solid var(--primary); padding-left: 8px; }
         .blank-input { border: none; border-bottom: 2px solid #95a5a6; width: 100px; text-align: center; font-size: 16px; color: var(--error); margin: 0 4px; outline: none; }
         .full-input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-size: 16px; margin-top: 5px; }
@@ -21,8 +20,8 @@
         .is-right { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
         .is-wrong { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
         .hidden { display: none; }
-        .q-select-list { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-        .small-btn { padding: 8px; font-size: 12px; background: #ecf0f1; border: 1px solid #bdc3c7; border-radius: 5px; cursor: pointer; }
+        .specific-item { background: #fff; border: 1px solid #ddd; margin-bottom: 5px; padding: 10px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; font-size: 14px; }
+        .percent-tag { font-weight: bold; color: var(--accent); margin-right: 5px; }
     </style>
 </head>
 <body>
@@ -37,11 +36,13 @@
 
 <div id="main-menu" class="card">
     <div id="practice-options">
-        <button class="menu-btn" onclick="initQuiz('fill', 0.5)">隨機填空練習</button>
-        <button class="menu-btn" onclick="initQuiz('dict', 0)">全內容默寫練習</button>
+        <h3>填空練習 (難易度)</h3>
+        <button class="menu-btn" style="background:#3498db" onclick="initQuiz('fill', 0.3)">簡單 (30% 挖空)</button>
+        <button class="menu-btn" style="background:#2980b9" onclick="initQuiz('fill', 0.6)">普通 (60% 挖空)</button>
+        <button class="menu-btn" style="background:#1c5980" onclick="initQuiz('fill', 0.9)">困難 (90% 挖空)</button>
         <hr>
-        <h3 style="margin-top:10px;">特定題目精修 (答對才能過)</h3>
-        <div class="q-select-list" id="specific-list"></div>
+        <h3>特定題目精修 (單題挑戰)</h3>
+        <div id="specific-list"></div>
     </div>
     <div id="exam-options" class="hidden">
         <button class="menu-btn" style="background:#e67e22" onclick="initQuiz('fill', 0.6, true)">正式測驗：填空題</button>
@@ -55,14 +56,14 @@
         <button id="submit-btn" class="menu-btn" style="background:var(--secondary); flex: 2;">送出答案</button>
         <button id="retry-btn" class="menu-btn hidden" style="background:var(--accent); flex: 2;">再試一次</button>
     </div>
-    <button id="back-btn" class="menu-btn" style="background:#95a5a6" onclick="location.reload()">返回主選單</button>
+    <button class="menu-btn" style="background:#95a5a6" onclick="location.reload()">返回主選單</button>
 </div>
 
 <script>
     const data = [
         {q: "衛哨兵之任務為何?", keys: ["維護軍紀", "保障安全", "監護", "警戒", "特定任務"], raw: "衛兵:以維護軍紀及保障安全為主。 哨兵:已執行監護警戒及特定任務為主。", w: 10},
         {q: "衛兵的職責為何?", keys: ["內衛兵", "營舍安全", "軍紀秩序", "外衛兵", "糾察", "人車出入管制"], raw: "內衛兵:保護營舍安全，維護軍紀秩序。 外衛兵:糾察出入官兵服務儀容，查驗出入物品，執行人車出入管制，維護責任區內安全，支援鄰近衛兵。", w: 10},
-        {q: "安全士官執掌為何?", keys: ["2小時", "站姿", "4小時", "坐姿", "盤查", "戰情室"], raw: "1.值勤時，2小時之衛哨採站姿值勤；4小時之衛哨採坐姿值勤。 2.值勤時熟記各項守則及管制單位人員進出，遇到可疑人物需上前盤查。 3.遇到上級長官督導，須立即通知戰情室，並由連級幹部陪同。 4.若遇狀況，應逐級回報戰情室。", w: 10},
+        {q: "安全士官執掌為何?", keys: ["2小時", "站姿", "4小時", "坐姿", "盤查", "戰情室", "逐級回報"], raw: "1.值勤時，2小時之衛哨採站姿值勤；4小時之衛哨採坐姿值勤。 2.值勤時熟記各項守則及管制單位人員進出，遇到可疑人物需上前盤查。 3.遇到上級長官督導，須立即通知戰情室，並由連級幹部陪同。 4.若遇狀況，應逐級回報戰情室。", w: 10},
         {q: "特別守則", keys: ["機步一連", "安全士官", "109大樓", "107營舍", "二級場", "機步三連", "五百障礙場"], raw: "我是機步三營機步一連派遺○○：○○安全士官○兵（士）○○○，我的位置於109大樓一樓中廊正前方25公尺為107營舍，右方30公尺處為一營二級場，後方25公尺處為機步三連營舍，左方40公尺處為五百障礙場，報告完畢。", w: 15},
         {q: "一般守則", keys: ["服裝整齊", "精神飽滿", "械彈攜帶", "堅守崗位", "提高警覺", "不看熱鬧", "服勤認真", "嚴格管制"], raw: "1.服裝整齊、配件光亮。2.精神飽滿、姿態端正。3.械彈攜帶、切遵規定。4.堅守崗位、嚴密搜索。5.提高警覺、時時戒備。6.不看熱鬧、注意可疑。7.服勤認真、說話客氣。8.嚴格管制、仔細查驗。", w: 15},
         {q: "安全士官守則", keys: ["單位安全", "械彈清點", "水電管理", "就寢人數", "衛哨勤務", "可疑人物", "接聽戰情", "緊急事故"], raw: "1.負責單位安全。2.械彈清點管制。3.嚴密水電管理。4.清點就寢人數。5.巡視衛哨勤務。6.注意可疑人物。7.接聽戰情電話。8.反應緊急事故。", w: 15},
@@ -70,7 +71,7 @@
         {q: "衛哨兵之定義為何?", keys: ["營區內", "警戒任務", "營區外", "警戒人員"], raw: "衛兵:凡在營區內之地區，擔任警戒任務人員。哨兵:在營區外，擔任警戒人員。", w: 10}
     ];
 
-    let focusIdx = -1; // -1 表示全部練習
+    let focusIdx = -1; 
 
     function switchMainMode(mode) {
         document.getElementById('p-mode').classList.toggle('active', mode==='practice');
@@ -86,7 +87,6 @@
         const list = document.getElementById('quiz-list');
         list.innerHTML = "";
 
-        // 決定顯示哪些題目
         const targets = (singleIdx === -1) ? data : [data[singleIdx]];
 
         targets.forEach((item, localIdx) => {
@@ -95,11 +95,13 @@
             if (type === 'fill') {
                 let tempText = item.raw;
                 item.keys.forEach(k => {
-                    tempText = tempText.replace(k, ` <input type="text" class="blank-input" data-ans="${k}" data-q="${actualIdx}"> `);
+                    if (Math.random() < rate || isOfficial) {
+                        tempText = tempText.replace(k, ` <input type="text" class="blank-input" data-ans="${k}" data-q="${actualIdx}"> `);
+                    }
                 });
                 content = `<div style="line-height:2;">${tempText}</div>`;
             } else {
-                content = `<textarea class="full-input" rows="4" data-q="${actualIdx}" placeholder="請在此默寫..."></textarea>`;
+                content = `<textarea class="full-input" rows="5" data-q="${actualIdx}" placeholder="請在此默寫全部內容..."></textarea>`;
             }
 
             list.innerHTML += `
@@ -112,57 +114,68 @@
         
         document.getElementById('submit-btn').classList.remove('hidden');
         document.getElementById('retry-btn').classList.add('hidden');
-        document.getElementById('submit-btn').onclick = () => checkAnswers(type, isOfficial);
+        document.getElementById('submit-btn').onclick = () => checkAnswers(type);
     }
 
-    function checkAnswers(type, isOfficial) {
-        let allCorrect = true;
+    function checkAnswers(type) {
         const targets = (focusIdx === -1) ? data.map((_, i) => i) : [focusIdx];
+        let overallCorrect = true;
 
         targets.forEach(idx => {
             const fb = document.getElementById(`fb-${idx}`);
             const inputs = document.querySelectorAll(`[data-q="${idx}"]`);
             const item = data[idx];
-            let isPassed = true;
+            let scoreCount = 0;
+            let totalKeyCount = 0;
 
             if (type === 'fill') {
-                inputs.forEach(input => { if (input.value.trim() !== input.dataset.ans) isPassed = false; });
+                totalKeyCount = inputs.length;
+                inputs.forEach(input => {
+                    if (input.value.trim() === input.dataset.ans) scoreCount++;
+                });
             } else {
                 const userVal = inputs[0].value.trim();
-                item.keys.forEach(k => { if (!userVal.includes(k)) isPassed = false; });
+                totalKeyCount = item.keys.length;
+                item.keys.forEach(k => {
+                    if (userVal.includes(k)) scoreCount++;
+                });
             }
 
-            fb.innerHTML = isPassed ? "✅ 正確！" : `❌ 錯誤。請再試一次或參考正確答案：<br><b>${item.raw}</b>`;
-            fb.className = `feedback ${isPassed ? 'is-right' : 'is-wrong'}`;
+            const percent = Math.round((scoreCount / totalKeyCount) * 100);
+            const isPassed = percent === 100;
+
+            fb.innerHTML = `<b>【達成率：${percent}%】</b><br>`;
+            if (isPassed) {
+                fb.innerHTML += "✅ 完全正確！";
+                fb.className = "feedback is-right";
+            } else {
+                fb.innerHTML += `❌ 漏掉了某些關鍵字。正確答案：<br>${item.raw}`;
+                fb.className = "feedback is-wrong";
+                overallCorrect = false;
+            }
             fb.classList.remove('hidden');
-            if (!isPassed) allCorrect = false;
         });
 
-        if (!allCorrect && focusIdx !== -1) {
-            // 如果是特定題目練習且答錯，切換按鈕
+        if (!overallCorrect && focusIdx !== -1) {
             document.getElementById('submit-btn').classList.add('hidden');
             document.getElementById('retry-btn').classList.remove('hidden');
             document.getElementById('retry-btn').onclick = () => {
-                // 清除答案重新嘗試
                 document.querySelectorAll('.blank-input, .full-input').forEach(i => i.value = "");
                 document.querySelectorAll('.feedback').forEach(f => f.classList.add('hidden'));
                 document.getElementById('submit-btn').classList.remove('hidden');
                 document.getElementById('retry-btn').classList.add('hidden');
             };
-        } else if (allCorrect && focusIdx !== -1) {
-            alert("恭喜答對！這題你已經熟練了。");
         }
     }
 
-    // 初始化特定題目列表
     window.onload = () => {
         const specList = document.getElementById('specific-list');
         data.forEach((item, idx) => {
-            const btn = document.createElement('button');
-            btn.className = 'small-btn';
-            btn.innerText = `練第 ${idx+1} 題`;
-            btn.onclick = () => initQuiz('dict', 0, false, idx);
-            specList.appendChild(btn);
+            specList.innerHTML += `
+                <div class="specific-item">
+                    <span><b>第 ${idx+1} 題：</b>${item.q}</span>
+                    <button class="m-btn active" style="font-size:12px;" onclick="initQuiz('dict', 0, false, ${idx})">默寫挑戰</button>
+                </div>`;
         });
     };
 </script>
