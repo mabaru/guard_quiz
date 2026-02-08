@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>軍事測驗系統 v13.1</title>
+    <title>軍事測驗系統 v13.2</title>
     <style>
         :root { --primary: #2c3e50; --secondary: #27ae60; --error: #e74c3c; --accent: #f39c12; --blue: #3498db; --purple: #8e44ad; --bg: #f4f7f6; }
         body { font-family: "Microsoft JhengHei", sans-serif; background: var(--bg); margin: 0; padding: 0; color: var(--primary); }
@@ -20,18 +20,19 @@
         .btn-accent { background: var(--accent); color: white; }
         .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
         .q-title { font-size: 1.1rem; font-weight: bold; margin-bottom: 12px; border-left: 5px solid var(--blue); padding-left: 10px; }
-        .blank-input { border: none; border-bottom: 2px solid #bdc3c7; width: 130px; text-align: center; font-size: 16px; color: var(--error); background: #fffde7; outline: none; }
+        .blank-input { border: none; border-bottom: 2px solid #bdc3c7; width: 120px; text-align: center; font-size: 16px; color: var(--error); background: #fffde7; outline: none; }
         .blank-input.wrong { border-bottom: 2px solid var(--error); background: #ffd7d7; }
         .err-hint { font-size: 12px; color: var(--error); display: block; margin-top: -3px; font-weight: bold; }
         .full-input { width: 100%; padding: 15px; border: 2px solid #eee; border-radius: 10px; font-size: 16px; min-height: 150px; box-sizing: border-box; line-height: 1.6; }
         .feedback { margin-top: 15px; padding: 15px; border-radius: 10px; white-space: pre-wrap; display: none; }
         .is-right { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
         .is-wrong { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .score-box { background: #fff3cd; color: #856404; padding: 15px; border-radius: 10px; font-size: 1.2rem; font-weight: bold; text-align: center; margin-bottom: 15px; }
         details { background: #fff; padding: 15px; border-radius: 12px; border: 1px solid #ddd; cursor: pointer; }
-        .log-content { font-size: 0.85rem; color: #666; max-height: 200px; overflow-y: auto; padding-top: 10px; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 12px; border-bottom: 1px solid #eee; text-align: center; }
-        .spec-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+        .log-content { font-size: 0.85rem; color: #666; max-height: 150px; overflow-y: auto; padding-top: 10px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 10px; border-bottom: 1px solid #eee; text-align: center; }
+        .spec-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 10px; }
         .spec-card { background: #f9f9f9; padding: 15px; border-radius: 12px; border: 1px solid #eee; }
     </style>
 </head>
@@ -39,17 +40,17 @@
 
 <div id="page-home" class="page active">
     <div class="hero">
-        <h1>機步三營測驗系統 v13.1</h1>
-        <p>文字校正完畢 • 默寫糾錯顯示</p>
+        <h1>機步三營測驗系統 v13.2</h1>
+        <p>分數結算修正 • 標點智慧比對</p>
     </div>
     <div class="card">
-        <button class="btn btn-primary" onclick="showPage('page-menu')">開始練習</button>
-        <button class="btn btn-outline" onclick="showPage('page-history')">歷史成績</button>
+        <button class="btn btn-primary" onclick="showPage('page-menu')">開始練習/考試</button>
+        <button class="btn btn-outline" onclick="showPage('page-history')">歷史成績紀錄</button>
         <details style="margin-top:20px;">
-            <summary>📜 版本更新全紀錄 (v1.0 - v13.1)</summary>
+            <summary>📜 版本更新日誌 (v1.0 - v13.2)</summary>
             <div class="log-content">
-                <b>v13.1 (最新)</b><br>- 修正：全題目文字校正（派遣、服勤認真等）。<br>- 新增：默寫錯誤時會同步顯示參考答案。<br>- 保留：單題「再練一次」功能。<br><hr>
-                <b>v13.0</b><br>- 修正：標點符號智慧忽略邏輯。<br>- 修正：特別守則姓名/時間精準比對。
+                <b>v13.2 (最新)</b><br>- 修正：考試模式分數無法正確顯示的邏輯錯誤。<br>- 修正：全題目文字精確校正（派遣、服勤認真）。<br>- 新增：默寫失敗自動顯示參考答案。<br>- 保留：單題「再練一次」按鈕。<br><hr>
+                <b>v13.0</b><br>- 修正：智慧忽略標點符號比對邏輯。
             </div>
         </details>
     </div>
@@ -65,22 +66,23 @@
         <button class="btn btn-outline" onclick="showPage('page-home')">返回首頁</button>
     </div>
     <div class="card">
-        <h3>🎯 單題精熟練習</h3>
+        <h3>🎯 單題精熟訓練</h3>
         <div class="spec-grid" id="spec-list"></div>
     </div>
 </div>
 
 <div id="page-quiz" class="page">
     <div class="card">
+        <div id="exam-result-box" class="score-box" style="display:none"></div>
         <div id="quiz-content"></div>
         <div id="quiz-footer">
             <button id="btn-submit" class="btn btn-secondary">檢查答案</button>
-            <button id="btn-retry" class="btn btn-accent" style="display:none">再練一次</button>
+            <button id="btn-retry" class="btn btn-accent" style="display:none">再練一次 (重複刷題)</button>
             <div id="save-box" style="display:none">
                 <input type="text" id="user-name" class="full-input" style="min-height:45px; margin-bottom:10px" placeholder="輸入姓名儲存成績">
-                <button class="btn btn-secondary" onclick="doSave()">儲存成績</button>
+                <button class="btn btn-secondary" onclick="doSave()">確認儲存並離開</button>
             </div>
-            <button class="btn btn-outline" onclick="showPage('page-menu')">返回</button>
+            <button class="btn btn-outline" onclick="showPage('page-menu')">取消/離開</button>
         </div>
     </div>
 </div>
@@ -139,6 +141,7 @@
         document.getElementById('btn-submit').style.display = 'block';
         document.getElementById('btn-retry').style.display = 'none';
         document.getElementById('save-box').style.display = 'none';
+        document.getElementById('exam-result-box').style.display = 'none';
         
         let pool = range === 'g' ? G_DATA : L_DATA;
         let targets = sid === -1 ? pool : pool.filter(d => d.id === sid);
@@ -170,7 +173,7 @@
     }
 
     function check(targets) {
-        let totalScore = 0;
+        let sc = 0;
         targets.forEach(item => {
             const fb = document.getElementById(`fb-${item.id}`);
             const ins = document.querySelectorAll(`[data-id="${item.id}"]`);
@@ -181,30 +184,28 @@
                     let a = i.dataset.ans;
                     let ok = (a === "ANY") ? (u.length > 0) : (ultraClean(u) === ultraClean(a));
                     if(ok) {
-                        hit++; i.classList.remove('wrong'); 
-                        if(i.nextSibling) i.nextSibling.innerHTML = "";
+                        hit++; i.classList.remove('wrong'); if(i.nextSibling) i.nextSibling.innerHTML = "";
                     } else {
-                        i.classList.add('wrong');
-                        if(i.nextSibling) i.nextSibling.innerHTML = `(❌：${u||'空'}→${a})`;
+                        i.classList.add('wrong'); if(i.nextSibling) i.nextSibling.innerHTML = `(❌：${u||'空'}→${a})`;
                     }
                 });
             } else {
                 let userTxt = ultraClean(ins[0].value);
                 item.keys.forEach(k => { if(userTxt.includes(ultraClean(k))) hit++; });
-                if(item.id === 4 && userTxt.length > 50) hit += 1; 
             }
             let pc = Math.min(100, Math.round((hit / (state.type==='fill'?ins.length:item.keys.length)) * 100));
-            
-            // 顯示反饋內容，默寫不滿分時顯示參考答案
             let refText = (state.type === 'dict' && pc < 100) ? `<br><br><span style="color:#666">❌ 參考答案：<br>${item.raw.replace(/{時間}|{階級}|{姓名}/g, '○○')}</span>` : "";
             fb.innerHTML = `達成度：${pc}% ${pc===100?'✅':'❌'}${refText}`;
             fb.className = `feedback ${pc===100?'is-right':'is-wrong'}`;
             fb.style.display = 'block';
-            if(pc===100) totalScore += item.w;
+            if(pc===100) sc += item.w;
         });
 
         if(state.isExam) {
-            if(state.range === 'g') state.gs = totalScore; else state.ls = totalScore;
+            if(state.range === 'g') state.gs = sc; else state.ls = sc;
+            const resBox = document.getElementById('exam-result-box');
+            resBox.innerHTML = `📝 測驗結算：<br>衛哨守則：${state.range==='g'?sc:0} 分 / 時機法規：${state.range==='l'?sc:0} 分`;
+            resBox.style.display = 'block';
             document.getElementById('btn-submit').style.display = 'none';
             document.getElementById('save-box').style.display = 'block';
         } else {
@@ -215,15 +216,15 @@
     }
 
     function doSave() {
-        const name = document.getElementById('user-name').value || "未命名";
-        const records = JSON.parse(localStorage.getItem('MIL_DB_131') || "[]");
-        records.unshift({ n: name, g: state.gs, l: state.ls, t: new Date().toLocaleDateString() });
-        localStorage.setItem('MIL_DB_131', JSON.stringify(records.slice(0, 15)));
+        const name = document.getElementById('user-name').value || "無名英雄";
+        const records = JSON.parse(localStorage.getItem('MIL_DB_132') || "[]");
+        records.unshift({ n: name, g: state.range==='g'?state.gs:0, l: state.range==='l'?state.ls:0, t: new Date().toLocaleDateString() });
+        localStorage.setItem('MIL_DB_132', JSON.stringify(records.slice(0, 15)));
         showPage('page-home');
     }
 
     function renderHistory() {
-        const r = JSON.parse(localStorage.getItem('MIL_DB_131') || "[]");
+        const r = JSON.parse(localStorage.getItem('MIL_DB_132') || "[]");
         document.getElementById('history-body').innerHTML = r.map(i => `<tr><td>${i.n}</td><td>${i.g}</td><td>${i.l}</td><td>${i.t}</td></tr>`).join('');
     }
 
