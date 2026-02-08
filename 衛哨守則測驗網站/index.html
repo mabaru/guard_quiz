@@ -3,230 +3,253 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>衛哨守則-全功能終極版</title>
+    <title>衛哨與時機測驗系統 v10.0</title>
     <style>
-        :root { --primary: #2c3e50; --secondary: #27ae60; --error: #e74c3c; --accent: #f39c12; }
+        :root { --primary: #2c3e50; --secondary: #27ae60; --error: #e74c3c; --accent: #f39c12; --blue: #3498db; --purple: #8e44ad; }
         body { font-family: "Microsoft JhengHei", sans-serif; background: #f0f2f5; margin: 0; padding: 10px; display: flex; flex-direction: column; align-items: center; }
         .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 100%; max-width: 600px; margin-bottom: 15px; box-sizing: border-box; }
         .header { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 600px; padding: 10px; }
         .mode-toggle { background: #eee; padding: 4px; border-radius: 20px; display: flex; }
         .m-btn { border: none; padding: 6px 15px; border-radius: 16px; cursor: pointer; font-size: 14px; background: none; transition: 0.3s; }
         .m-btn.active { background: var(--primary); color: white; }
-        .menu-btn { width: 100%; padding: 12px; margin: 8px 0; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; background: var(--primary); color: white; }
+        .menu-btn { width: 100%; padding: 12px; margin: 6px 0; border: none; border-radius: 8px; cursor: pointer; font-size: 15px; background: var(--primary); color: white; display: block; text-align: center; text-decoration: none; }
+        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
         .q-title { font-weight: bold; color: #2c3e50; margin-bottom: 8px; border-left: 4px solid var(--primary); padding-left: 8px; }
-        .blank-input { border: none; border-bottom: 2px solid #95a5a6; width: 100px; text-align: center; font-size: 16px; color: var(--error); margin: 0 4px; outline: none; }
+        .blank-input { border: none; border-bottom: 2px solid #95a5a6; width: 90px; text-align: center; font-size: 16px; color: var(--error); margin: 0 4px; outline: none; }
         .full-input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-size: 16px; margin-top: 5px; }
         .feedback { margin-top: 8px; padding: 10px; border-radius: 6px; font-size: 14px; line-height: 1.5; border: 1px solid transparent; }
         .is-right { background: #d4edda; color: #155724; border-color: #c3e6cb; }
         .is-wrong { background: #f8d7da; color: #721c24; border-color: #f5c6cb; }
+        .score-display { font-size: 18px; font-weight: bold; background: #fff3cd; padding: 15px; border-radius: 8px; margin-bottom: 15px; }
         .hidden { display: none; }
-        .score-box { font-size: 26px; font-weight: bold; color: var(--secondary); text-align: center; margin: 15px 0; }
-        .specific-item { background: #f9f9f9; border: 1px solid #ddd; margin-bottom: 8px; padding: 10px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; font-size: 14px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; background: white; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: center; font-size: 13px; }
+        .spec-item { display: flex; align-items: center; background: #f8f9fa; padding: 8px; border-radius: 6px; margin-bottom: 6px; font-size: 13px; }
+        .spec-item span { flex: 1; margin-right: 10px; }
+        .sm-btn { padding: 5px 10px; border: 1px solid #ccc; background: white; border-radius: 4px; cursor: pointer; font-size: 11px; margin-left: 4px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 12px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
     </style>
 </head>
 <body>
 
 <div class="header">
-    <h2 id="sys-title">衛哨練習模式</h2>
+    <h2 id="sys-title">衛哨練習</h2>
     <div class="mode-toggle">
-        <button id="p-mode" class="m-btn active" onclick="switchMainMode('practice')">練習</button>
-        <button id="e-mode" class="m-btn" onclick="switchMainMode('exam')">考試</button>
+        <button id="p-mode" class="m-btn active" onclick="switchMainMode('practice')">練習模式</button>
+        <button id="e-mode" class="m-btn" onclick="switchMainMode('exam')">考試模式</button>
     </div>
 </div>
 
 <div id="main-menu" class="card">
-    <div id="practice-options">
-        <h3>填空練習 (難度)</h3>
-        <button class="menu-btn" style="background:#3498db" onclick="initQuiz('fill', 0.3, false)">簡單填空</button>
-        <button class="menu-btn" style="background:#2980b9" onclick="initQuiz('fill', 0.6, false)">普通填空</button>
-        <button class="menu-btn" style="background:#1c5980" onclick="initQuiz('fill', 0.9, false)">困難填空</button>
-        <h3>默寫練習</h3>
-        <button class="menu-btn" style="background:#8e44ad" onclick="initQuiz('dict', 0, false)">全守則默寫挑戰</button>
+    <div id="menu-content"></div>
+
+    <div id="difficulty-level" class="hidden">
+        <h3 id="diff-title" style="color:var(--blue)">選擇填空難度</h3>
+        <button class="menu-btn" style="background:var(--blue)" onclick="startQuiz(0.35)">簡單 (部分挖空)</button>
+        <button class="menu-btn" style="background:#2980b9" onclick="startQuiz(0.65)">普通 (過半挖空)</button>
+        <button class="menu-btn" style="background:#1c5980" onclick="startQuiz(0.95)">困難 (幾乎默寫)</button>
+        <button class="menu-btn" style="background:#95a5a6" onclick="renderMenu()">回上一步</button>
+    </div>
+
+    <div id="practice-extra">
         <hr>
         <h3>特定題目精修</h3>
         <div id="specific-list"></div>
     </div>
 
-    <div id="exam-options" class="hidden">
-        <h3>選擇正式測驗類型</h3>
-        <button class="menu-btn" style="background:#e67e22" onclick="initQuiz('fill', 0.3, true)">考試：填空 (簡單)</button>
-        <button class="menu-btn" style="background:#d35400" onclick="initQuiz('fill', 0.7, true)">考試：填空 (困難)</button>
-        <button class="menu-btn" style="background:#c0392b" onclick="initQuiz('dict', 0, true)">考試：全內容默寫</button>
-        <p style="font-size:12px; color:#666;">※ 考試模式會計算配分並紀錄成績</p>
-    </div>
-
     <hr>
     <h3>歷史成績單</h3>
     <table>
-        <thead><tr><th>姓名</th><th>分數</th><th>日期</th></tr></thead>
+        <thead><tr><th>姓名</th><th>衛哨分</th><th>法律分</th><th>日期</th></tr></thead>
         <tbody id="history-body"></tbody>
     </table>
 </div>
 
 <div id="quiz-area" class="card hidden">
     <div id="quiz-list"></div>
-    
     <div id="result-container" class="hidden">
-        <div id="total-score-display" class="score-box"></div>
-        <div id="save-form">
-            <input type="text" id="user-name" class="full-input" placeholder="請輸入姓名以儲存分數">
-            <button class="menu-btn" style="background:var(--secondary)" onclick="saveScoreRecord()">儲存紀錄</button>
-        </div>
+        <div id="score-report" class="score-display"></div>
+        <input type="text" id="user-name" class="full-input" placeholder="輸入姓名儲存成績">
+        <button class="menu-btn" style="background:var(--secondary)" onclick="saveScoreRecord()">儲存紀錄並返回</button>
     </div>
-
-    <div style="display: flex; gap: 10px;">
+    <div id="action-btns" style="display: flex; gap: 10px; margin-top: 15px;">
         <button id="submit-btn" class="menu-btn" style="background:var(--secondary); flex: 2;">送出答案</button>
         <button id="retry-btn" class="menu-btn hidden" style="background:var(--accent); flex: 2;">再試一次</button>
     </div>
-    <button class="menu-btn" style="background:#95a5a6" onclick="location.reload()">返回選單</button>
+    <button class="menu-btn" style="background:#95a5a6" onclick="location.reload()">回主選單</button>
 </div>
 
 <script>
-    const data = [
-        {q: "衛哨兵之任務為何?", keys: ["維護軍紀", "保障安全", "監護", "警戒", "特定任務"], raw: "衛兵:以維護軍紀及保障安全為主。 哨兵:已執行監護警戒及特定任務為主。", w: 10},
-        {q: "衛兵的職責為何?", keys: ["內衛兵", "營舍安全", "軍紀秩序", "外衛兵", "糾察", "人車出入管制"], raw: "內衛兵:保護營舍安全，維護軍紀秩序。 外衛兵:糾察出入官兵服務儀容，查驗出入物品，執行人車出入管制，維護責任區內安全，支援鄰近衛兵。", w: 10},
-        {q: "安全士官執掌為何?", keys: ["2小時", "站姿", "4小時", "坐姿", "盤查", "戰情室", "逐級回報"], raw: "1.值勤時，2小時之衛哨採站姿值勤；4小時之衛哨採坐姿值勤。 2.值勤時熟記各項守則及管制單位人員進出，遇到可疑人物需上前盤查。 3.遇到上級長官督導，須立即通知戰情室，並由連級幹部陪同。 4.若遇狀況，應逐級回報戰情室。", w: 10},
-        {q: "特別守則", keys: ["機步一連", "安全士官", "109大樓", "107營舍", "二級場", "機步三連", "五百障礙場"], raw: "我是機步三營機步一連派遺○○：○○安全士官○兵（士）○○○，我的位置於109大樓一樓中廊正前方25公尺為107營舍，右方30公尺處為一營二級場，後方25公尺處為機步三連營舍，左方40公尺處為五百障礙場，報告完畢。", w: 15},
-        {q: "一般守則", keys: ["服裝整齊", "精神飽滿", "械彈攜帶", "堅守崗位", "提高警覺", "不看熱鬧", "服勤認真", "嚴格管制"], raw: "1.服裝整齊、配件光亮。2.精神飽滿、姿態端正。3.械彈攜帶、切遵規定。4.堅守崗位、嚴密搜索。5.提高警覺、時時戒備。6.不看熱鬧、注意可疑。7.服勤認真、說話客氣。8.嚴格管制、仔細查驗。", w: 15},
-        {q: "安全士官守則", keys: ["單位安全", "械彈清點", "水電管理", "就寢人數", "衛哨勤務", "可疑人物", "接聽戰情", "緊急事故"], raw: "1.負責單位安全。2.械彈清點管制。3.嚴密水電管理。4.清點就寢人數。5.巡視衛哨勤務。6.注意可疑人物。7.接聽戰情電話。8.反應緊急事故。", w: 15},
-        {q: "情報傳遞", keys: ["何人", "何時", "何地", "何事", "為何"], raw: "何人、何時、何地、何事、為何。", w: 15},
-        {q: "衛哨兵之定義為何?", keys: ["營區內", "警戒任務", "營區外", "警戒人員"], raw: "衛兵:凡在營區內之地區，擔任警戒任務人員。哨兵:在營區外，擔任警戒人員。", w: 10}
+    const guardData = [
+        {id:1, type:"guard", q:"衛哨兵之任務為何?", keys:["維護軍紀", "保障安全", "監護", "警戒", "特定任務"], raw:"衛兵:以維護軍紀及保障安全為主。 哨兵:已執行監護警戒及特定任務為主。", w:10},
+        {id:2, type:"guard", q:"衛兵的職責為何?", keys:["內衛兵", "營舍安全", "軍紀秩序", "外衛兵", "糾察", "人車出入管制"], raw:"內衛兵:保護營舍安全，維護軍紀秩序。 外衛兵:糾察出入官兵服務儀容，查驗出入物品，執行人車出入管制，維護責任區內安全，支援鄰近衛兵。", w:10},
+        {id:3, type:"guard", q:"安全士官執掌為何?", keys:["2小時", "站姿", "4小時", "坐姿", "盤查", "戰情室", "逐級回報"], raw:"1.值勤時，2小時之衛哨採站姿值勤；4小時之衛哨採坐姿值勤。 2.值勤時熟記各項守則及管制單位人員進出，遇到可疑人物需上前盤查。 3.遇到上級長官督導，須立即通知戰情室，並由連級幹部陪同。 4.若遇狀況，應逐級回報戰情室。", w:10},
+        {id:4, type:"guard", q:"特別守則", keys:["機步一連", "安全士官", "109大樓", "107營舍", "二級場", "機步三連", "五百障礙場"], raw:"我是機步三營機步一連派遺安全士官，我的位置於109大樓一樓中廊正前方25公尺為107營舍，右方30公尺處為一營二級場，後方25公尺處為機步三連營舍，左方40公尺處為五百障礙場，報告完畢。", w:15},
+        {id:5, type:"guard", q:"一般守則", keys:["服裝整齊", "精神飽滿", "械彈攜帶", "堅守崗位", "提高警覺", "不看熱鬧", "服勤認真", "嚴格管制"], raw:"1.服裝整齊、配件光亮。2.精神飽滿、姿態端正。3.械彈攜帶、切遵規定。4.堅守崗位、嚴密搜索。5.提高警覺、時時戒備。6.不看熱鬧、注意可疑。7.服勤認真、說話客氣。8.嚴格管制、仔細查驗。", w:15},
+        {id:6, type:"guard", q:"安全士官守則", keys:["單位安全", "械彈清點", "水電管理", "就寢人數", "衛哨勤務", "可疑人物", "接聽戰情", "緊急事故"], raw:"1.負責單位安全。2.械彈清點管制。3.嚴密水電管理。4.清點就寢人數。5.巡視衛哨勤務。6.注意可疑人物。7.接聽戰情電話。8.反應緊急事故。", w:15},
+        {id:7, type:"guard", q:"情報傳遞", keys:["何人", "何時", "何地", "何事", "為何"], raw:"何人、何時、何地、何事、為何。", w:15},
+        {id:8, type:"guard", q:"衛哨兵之定義為何?", keys:["營區內", "警戒任務", "營區外", "警戒人員"], raw:"衛兵:凡在營區內之地區，擔任警戒任務人員。哨兵:在營區外，擔任警戒人員。", w:10}
+    ];
+
+    const lawData = [
+        {id:9, type:"law", q:"器械使用時機", keys:["軍事安全", "遙控無人機", "設施", "機密資訊", "船", "航空器", "強暴", "滋事"], raw:"(一)為避免非常變故，維持軍事安全。(二)騷動行為足以危害軍事安全。(三)遙控無人機或其他無人機飛行物子飛越軍事營區，而有危害國防、軍事之設施或機密資訊之虞。(四)警戒、管制之場所、建築物、物品、車、船、航空器或財產遭受危害。(五)依法應逮捕之人拒捕、脫逃(六)生命、身體、自由遭受強暴、脅迫，或有事實足認為有危害之虞。(七)持有刀械而有滋事者，經告誡拋棄，仍不聽從。", w:70},
+        {id:10, type:"law", q:"武器使用時機", keys:["不足以排除侵害", "緊急危機", "現在不法之侵害", "防衛自己"], raw:"(一)前項各款之情形，使用器械不足以排除侵害或阻止應逮捕之人拒捕、脫逃。(二)為避免自己或他人生命、身體、自由、財產之緊急危機時。(三)對於現在不法之侵害，而出於防衛自己或他人權利時。", w:30}
     ];
 
     let currentMainMode = 'practice';
-    let currentQuizType = '';
-    let isExam = false;
-    let finalExamScore = 0;
-    let focusSingleIdx = -1;
+    let tempParams = {}; 
 
     function switchMainMode(mode) {
         currentMainMode = mode;
         document.getElementById('p-mode').classList.toggle('active', mode==='practice');
         document.getElementById('e-mode').classList.toggle('active', mode==='exam');
-        document.getElementById('practice-options').classList.toggle('hidden', mode==='exam');
-        document.getElementById('exam-options').classList.toggle('hidden', mode==='practice');
-        document.getElementById('sys-title').innerText = mode === 'practice' ? '衛哨練習模式' : '衛哨正式考試';
+        document.getElementById('practice-extra').classList.toggle('hidden', mode==='exam');
+        renderMenu();
     }
 
-    function initQuiz(type, rate, examFlag, singleIdx = -1) {
-        currentQuizType = type;
-        isExam = examFlag;
-        focusSingleIdx = singleIdx;
+    function renderMenu() {
+        const container = document.getElementById('menu-content');
+        document.getElementById('difficulty-level').classList.add('hidden');
+        container.classList.remove('hidden');
         
+        if (currentMainMode === 'practice') {
+            container.innerHTML = `
+                <h3>全範圍練習</h3>
+                <div class="btn-grid">
+                    <button class="menu-btn" style="background:var(--blue)" onclick="askDifficulty('fill', 'all', false)">全範圍填空</button>
+                    <button class="menu-btn" style="background:var(--purple)" onclick="startQuiz(0, 'dict', 'all', false)">全範圍默寫</button>
+                </div>
+                <h3>單項練習</h3>
+                <div class="btn-grid">
+                    <button class="menu-btn" onclick="askDifficulty('fill', 'guard', false)">衛哨填空</button>
+                    <button class="menu-btn" onclick="startQuiz(0, 'dict', 'guard', false)">衛哨默寫</button>
+                    <button class="menu-btn" style="background:#455a64" onclick="askDifficulty('fill', 'law', false)">使用時機填空</button>
+                    <button class="menu-btn" style="background:#455a64" onclick="startQuiz(0, 'dict', 'law', false)">使用時機默寫</button>
+                </div>`;
+        } else {
+            container.innerHTML = `
+                <h3>正式測驗 (計算成績)</h3>
+                <button class="menu-btn" style="background:#e67e22" onclick="askDifficulty('fill', 'all', true)">全範圍填空考試</button>
+                <button class="menu-btn" style="background:#d35400" onclick="startQuiz(0, 'dict', 'all', true)">全範圍默寫考試</button>
+                <div class="btn-grid">
+                    <button class="menu-btn" onclick="askDifficulty('fill', 'guard', true)">衛哨填空考</button>
+                    <button class="menu-btn" onclick="startQuiz(0, 'dict', 'guard', true)">衛哨默寫考</button>
+                    <button class="menu-btn" style="background:#c0392b" onclick="askDifficulty('fill', 'law', true)">時機填空考</button>
+                    <button class="menu-btn" style="background:#c0392b" onclick="startQuiz(0, 'dict', 'law', true)">時機默寫考</button>
+                </div>`;
+        }
+    }
+
+    function askDifficulty(type, filter, isExam) {
+        tempParams = { type, filter, isExam };
+        document.getElementById('menu-content').classList.add('hidden');
+        document.getElementById('difficulty-level').classList.remove('hidden');
+    }
+
+    function startQuiz(rate, type = null, filter = null, isExam = null, singleId = -1) {
+        const qType = type || tempParams.type;
+        const qFilter = filter || tempParams.filter;
+        const qIsExam = isExam !== null ? isExam : tempParams.isExam;
+        
+        window.currentType = qType; window.currentIsExam = qIsExam;
+
         document.getElementById('main-menu').classList.add('hidden');
         document.getElementById('quiz-area').classList.remove('hidden');
         const list = document.getElementById('quiz-list');
         list.innerHTML = "";
 
-        const targets = (singleIdx === -1) ? data : [data[singleIdx]];
+        let dataPool = [...guardData, ...lawData];
+        let targets = singleId !== -1 ? dataPool.filter(d => d.id === singleId) :
+                     qFilter === 'all' ? dataPool : 
+                     qFilter === 'guard' ? guardData : lawData;
 
-        targets.forEach((item, localIdx) => {
-            let actualIdx = (singleIdx === -1) ? localIdx : singleIdx;
+        targets.forEach(item => {
             let content = "";
-            if (type === 'fill') {
-                let tempText = item.raw;
+            if (qType === 'fill') {
+                let text = item.raw;
                 item.keys.forEach(k => {
-                    if (Math.random() < rate) {
-                        tempText = tempText.replace(k, `<input type="text" class="blank-input" data-ans="${k}" data-q="${actualIdx}">`);
+                    if (Math.random() < rate || qIsExam) {
+                        text = text.replace(k, `<input type="text" class="blank-input" data-ans="${k}" data-id="${item.id}">`);
                     }
                 });
-                content = `<div style="line-height:2.2;">${tempText}</div>`;
+                content = `<div style="line-height:2.2;">${text}</div>`;
             } else {
-                content = `<textarea class="full-input" rows="4" data-q="${actualIdx}" placeholder="請在此默寫答案..."></textarea>`;
+                content = `<textarea class="full-input" rows="5" data-id="${item.id}" placeholder="請在此默寫全部內容..."></textarea>`;
             }
-
-            list.innerHTML += `
-                <div class="q-block" style="margin-bottom:25px;">
-                    <div class="q-title">${actualIdx+1}. ${item.q} ${isExam ? '('+item.w+'%)' : ''}</div>
-                    ${content}
-                    <div id="fb-${actualIdx}" class="feedback hidden"></div>
-                </div>`;
+            list.innerHTML += `<div class="q-block" style="margin-bottom:25px;"><div class="q-title">${item.q}</div>${content}<div id="fb-${item.id}" class="feedback hidden"></div></div>`;
         });
-        
-        document.getElementById('submit-btn').classList.remove('hidden');
-        document.getElementById('retry-btn').classList.add('hidden');
-        document.getElementById('result-container').classList.add('hidden');
         document.getElementById('submit-btn').onclick = checkAnswers;
     }
 
     function checkAnswers() {
-        const targets = (focusSingleIdx === -1) ? data.map((_, i) => i) : [focusSingleIdx];
-        let examTotalScore = 0;
-        let allClear = true;
+        let gTotal = 0, lTotal = 0;
+        let allCorrect = true;
+        document.querySelectorAll('.q-block').forEach(block => {
+            let id = parseInt(block.querySelector('[data-id]').dataset.id);
+            let item = [...guardData, ...lawData].find(d => d.id === id);
+            let inputs = block.querySelectorAll(`[data-id="${id}"]`);
+            let score = 0;
 
-        targets.forEach(idx => {
-            const fb = document.getElementById(`fb-${idx}`);
-            const inputs = document.querySelectorAll(`[data-q="${idx}"]`);
-            const item = data[idx];
-            let correctKeys = 0;
-            let totalPossible = 0;
-
-            if (currentQuizType === 'fill') {
-                totalPossible = inputs.length;
-                inputs.forEach(input => {
-                    if (input.value.trim() === input.dataset.ans) correctKeys++;
-                });
+            if (window.currentType === 'fill') {
+                inputs.forEach(i => { if(i.value.trim() === i.dataset.ans) score++; });
             } else {
-                const userVal = inputs[0].value.trim();
-                totalPossible = item.keys.length;
-                item.keys.forEach(k => { if (userVal.includes(k)) correctKeys++; });
+                let val = inputs[0].value.trim();
+                item.keys.forEach(k => { if(val.includes(k)) score++; });
             }
 
-            const ratio = totalPossible === 0 ? 1 : (correctKeys / totalPossible);
-            const percent = Math.round(ratio * 100);
-            
-            fb.innerHTML = `<b>【完成度：${percent}%】</b><br>`;
-            if (percent === 100) {
-                fb.innerHTML += "✅ 完美！內容完全正確。";
-                fb.className = "feedback is-right";
-                examTotalScore += item.w;
-            } else {
-                fb.innerHTML += `❌ 漏掉部分內容。正確答案：<br>${item.raw}`;
-                fb.className = "feedback is-wrong";
-                allClear = false;
-            }
+            let total = window.currentType === 'fill' ? inputs.length : item.keys.length;
+            let percent = total === 0 ? 100 : Math.round((score/total)*100);
+            let fb = document.getElementById(`fb-${id}`);
+            fb.innerHTML = `<b>【達成度：${percent}%】</b><br>${percent===100 ? '✅ 正確' : '❌ 參考答案：<br>'+item.raw}`;
+            fb.className = `feedback ${percent===100 ? 'is-right' : 'is-wrong'}`;
             fb.classList.remove('hidden');
+
+            if (percent === 100) {
+                if (item.type === 'guard') gTotal += item.w; else lTotal += item.w;
+            } else {
+                allCorrect = false;
+            }
         });
 
-        if (isExam && focusSingleIdx === -1) {
-            finalExamScore = examTotalScore;
-            document.getElementById('total-score-display').innerText = `最終成績：${finalExamScore} 分`;
+        if (window.currentIsExam) {
+            window.finalG = gTotal; window.finalL = lTotal;
+            document.getElementById('score-report').innerHTML = `測驗結算：<br>衛哨守則分數：${gTotal} 分<br>使用時機分數：${lScore} 分`;
             document.getElementById('result-container').classList.remove('hidden');
             document.getElementById('submit-btn').classList.add('hidden');
-        } else if (!allClear && focusSingleIdx !== -1) {
-            // 特定題目練習失敗
+        } else if (!allCorrect && document.querySelectorAll('.q-block').length === 1) {
+            // 單題練習失敗顯示再試一次
             document.getElementById('submit-btn').classList.add('hidden');
             document.getElementById('retry-btn').classList.remove('hidden');
-            document.getElementById('retry-btn').onclick = () => initQuiz(currentQuizType, 0, false, focusSingleIdx);
+            document.getElementById('retry-btn').onclick = () => {
+                document.querySelectorAll('.blank-input, .full-input').forEach(i => i.value = "");
+                document.querySelectorAll('.feedback').forEach(f => f.classList.add('hidden'));
+                document.getElementById('submit-btn').classList.remove('hidden');
+                document.getElementById('retry-btn').classList.add('hidden');
+            };
         }
     }
 
     function saveScoreRecord() {
         const name = document.getElementById('user-name').value || "無名英雄";
-        const records = JSON.parse(localStorage.getItem('guard_v6_scores') || "[]");
-        records.unshift({name, score: finalExamScore, date: new Date().toLocaleDateString()});
-        localStorage.setItem('guard_v6_scores', JSON.stringify(records.slice(0, 10)));
+        const records = JSON.parse(localStorage.getItem('guard_v10_scores') || "[]");
+        records.unshift({name, gScore: window.finalG, lScore: window.finalL, date: new Date().toLocaleDateString()});
+        localStorage.setItem('guard_v10_scores', JSON.stringify(records.slice(0, 10)));
         location.reload();
     }
 
     window.onload = () => {
+        switchMainMode('practice');
         const specList = document.getElementById('specific-list');
-        data.forEach((item, idx) => {
+        [...guardData, ...lawData].forEach(item => {
             specList.innerHTML += `
-                <div class="specific-item">
-                    <span style="flex:1;"><b>${idx+1}.</b> ${item.q.substring(0,12)}...</span>
-                    <button class="m-btn active" style="font-size:11px; margin-left:5px;" onclick="initQuiz('dict', 0, false, ${idx})">練默寫</button>
-                    <button class="m-btn active" style="font-size:11px; margin-left:5px; background:#16a085" onclick="initQuiz('fill', 0.6, false, ${idx})">練填空</button>
+                <div class="spec-item">
+                    <span>${item.q}</span>
+                    <button class="sm-btn" onclick="startQuiz(0.5, 'fill', 'all', false, ${item.id})">練填空</button>
+                    <button class="sm-btn" onclick="startQuiz(0, 'dict', 'all', false, ${item.id})">練默寫</button>
                 </div>`;
         });
-
-        const records = JSON.parse(localStorage.getItem('guard_v6_scores') || "[]");
+        const records = JSON.parse(localStorage.getItem('guard_v10_scores') || "[]");
         const body = document.getElementById('history-body');
-        records.forEach(r => {
-            body.innerHTML += `<tr><td>${r.name}</td><td><b>${r.score}</b></td><td>${r.date}</td></tr>`;
-        });
+        records.forEach(r => { body.innerHTML += `<tr><td>${r.name}</td><td>${r.gScore}</td><td>${r.lScore}</td><td>${r.date}</td></tr>`; });
     };
 </script>
 </body>
