@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>軍事測驗系統 v13.0</title>
+    <title>軍事測驗系統 v13.1</title>
     <style>
         :root { --primary: #2c3e50; --secondary: #27ae60; --error: #e74c3c; --accent: #f39c12; --blue: #3498db; --purple: #8e44ad; --bg: #f4f7f6; }
         body { font-family: "Microsoft JhengHei", sans-serif; background: var(--bg); margin: 0; padding: 0; color: var(--primary); }
@@ -39,18 +39,17 @@
 
 <div id="page-home" class="page active">
     <div class="hero">
-        <h1>機步三營測驗系統 v13.0</h1>
-        <p>標點符號智慧忽略 • 特別守則精準比對</p>
+        <h1>機步三營測驗系統 v13.1</h1>
+        <p>文字校正完畢 • 默寫糾錯顯示</p>
     </div>
     <div class="card">
         <button class="btn btn-primary" onclick="showPage('page-menu')">開始練習</button>
         <button class="btn btn-outline" onclick="showPage('page-history')">歷史成績</button>
         <details style="margin-top:20px;">
-            <summary>📜 版本更新全紀錄 (v1.0 - v13.0)</summary>
+            <summary>📜 版本更新全紀錄 (v1.0 - v13.1)</summary>
             <div class="log-content">
-                <b>v13.0 (最新)</b><br>- 修正：默寫模式新增標點符號自動忽略邏輯。<br>- 修正：特別守則姓名/時間不再因格式扣分。<br>- 新增：練習完畢後「再練一次」按鈕常駐。<br><hr>
-                <b>v12.9</b><br>- 修正：填空顯示錯值與正值比對。<br><hr>
-                <b>v1.0 - v12.8</b><br>- 建立 SPA 架構、雙項計分系統、LocalStorage 儲存。
+                <b>v13.1 (最新)</b><br>- 修正：全題目文字校正（派遣、服勤認真等）。<br>- 新增：默寫錯誤時會同步顯示參考答案。<br>- 保留：單題「再練一次」功能。<br><hr>
+                <b>v13.0</b><br>- 修正：標點符號智慧忽略邏輯。<br>- 修正：特別守則姓名/時間精準比對。
             </div>
         </details>
     </div>
@@ -102,7 +101,7 @@
         {id:1, type:"g", q:"1.衛哨兵之任務為何?", keys:["維護軍紀", "保障安全", "監護警戒", "特定任務"], raw:"衛兵:以維護軍紀及保障安全為主。 哨兵:已執行監護警戒及特定任務為主。", w:10},
         {id:2, type:"g", q:"2.衛兵的職責為何?", keys:["內衛兵", "營舍安全", "軍紀秩序", "外衛兵", "糾察", "人車出入管制"], raw:"內衛兵:保護營舍安全，維護軍紀秩序。 外衛兵:糾察出入官兵服務儀容，查驗出入物品，執行人車出入管制，維護責任區內安全，支援鄰近衛兵。", w:10},
         {id:3, type:"g", q:"3.安全士官執掌為何?", keys:["2小時", "站姿", "4小時", "坐姿", "盤查", "戰情室", "單獨陪同督導", "適切處置", "逐級回報"], raw:"1.值勤時，2小時之衛哨採站姿值勤；4小時之衛哨採坐姿值勤。2.值勤時熟記各項守則及管制單位人員進出，遇到可疑人物需上前盤查。3.遇到上級長官督導，須立即通知戰情室，並由連級幹部陪同，不可單獨陪同督導。4.若遇狀況，應依相關作業規定，適切處置，逐級回報戰情室。", w:10},
-        {id:4, type:"g", q:"4.特別守則", keys:["機步一連", "109大樓", "107營舍", "二級場", "機步三連", "五百障礙場"], raw:"我是機步三營機步一連派遺{時間}安全士官{階級}{姓名}，我的位置於109大樓一樓中廊正前方25公尺為107營舍，右方30公尺處為一營二級場，後方25公尺處為機步三連營舍，左方40公尺處為五百障礙場，報告完畢。", w:15},
+        {id:4, type:"g", q:"4.特別守則", keys:["機步一連", "109大樓", "107營舍", "二級場", "機步三連", "五百障礙場"], raw:"我是機步三營機步一連派遣{時間}安全士官{階級}{姓名}，我的位置於109大樓一樓中廊正前方25公尺為107營舍，右方30公尺處為一營二級場，後方25公尺處為機步三連營舍，左方40公尺處為五百障礙場，報告完畢。", w:15},
         {id:5, type:"g", q:"5.一般守則", keys:["服裝整齊", "配件光亮", "精神飽滿", "姿態端正", "械彈攜帶", "切遵規定", "堅守崗位", "嚴密搜索", "提高警覺", "時時戒備", "不看熱鬧", "注意可疑", "服勤認真", "說話客氣", "嚴格管制", "仔細查驗"], raw:"1.服裝整齊、配件光亮。2.精神飽滿、姿態端正。3.械彈攜帶、切遵規定。4.堅守崗位、嚴密搜索。5.提高警覺、時時戒備。6.不看熱鬧、注意可疑。7.服勤認真、說話客氣。8.嚴格管制、仔細查驗。", w:15},
         {id:6, type:"g", q:"6.安全士官守則", keys:["單位安全", "械彈清點", "水電管理", "清點人數", "巡視衛哨", "可疑人物", "接聽戰情", "緊急事故"], raw:"1.負責單位安全。2.械彈清點管制。3.嚴密水電管理。4.清點就寢人數。5.巡視衛哨勤務。6.注意可疑人物。7.接聽戰情電話。8.反應緊急事故。", w:15},
         {id:7, type:"g", q:"7.情報傳遞", keys:["何人", "何時", "何地", "何事", "為何"], raw:"何人、何時、何地、何事、為何。", w:15},
@@ -110,8 +109,8 @@
     ];
 
     const L_DATA = [
-        {id:9, type:"l", q:"9.器械使用時機", keys:["非常變故", "軍事安全", "騷動行為", "遙控無人機", "設施", "機密資訊", "遭受危害", "拒捕", "強暴", "滋事"], raw:"(一)為避免非常變故，維持軍事安全。(二)騷動行為足以危害軍事安全。(三)遙控無人機或其他無人機飛行物子飛越軍事營區，而有危害國防、軍事之設施或機密資訊之虞。(四)警戒、管制之場所、建築物、物品、車、船、航空器 or 財產遭受危害。(五)依法應逮捕之人拒捕、脫逃(六)生命、身體、自由遭受強暴、脅迫，或有事實足認為有危害之虞。(七)持有刀械而有滋事者，經告誡拋棄，仍不聽從。", w:70},
-        {id:10, type:"l", q:"10.武器使用時機", keys:["不足以排除侵害", "緊急危機", "現在不法之侵害", "防衛自己"], raw:"(一)前項各款之情形，使用器械不足以排除侵害 or 阻止應逮捕之人拒捕、脫逃。(二)為避免自己或他人生命、身體、自由、財產之緊急危機時。(三)對於現在不法之侵害，而出於防衛自己或他人權利時。", w:30}
+        {id:9, type:"l", q:"9.器械使用時機", keys:["非常變故", "軍事安全", "騷動行為", "遙控無人機", "設施", "機密資訊", "遭受危害", "拒捕", "強暴", "滋事"], raw:"(一)為避免非常變故，維持軍事安全。(二)騷動行為足以危害軍事安全。(三)遙控無人機或其他無人機飛行物子飛越軍事營區，而有危害國防、軍事之設施或機密資訊之虞。(四)警戒、管制之場所、建築物、物品、車、船、航空器或財產遭受危害。(五)依法應逮捕之人拒捕、脫逃(六)生命、身體、自由遭受強暴、脅迫，或有事實足認為有危害之虞。(七)持有刀械而有滋事者，經告誡拋棄，仍不聽從。", w:70},
+        {id:10, type:"l", q:"10.武器使用時機", keys:["不足以排除侵害", "緊急危機", "現在不法之侵害", "防衛自己"], raw:"(一)前項各款之情形，使用器械不足以排除侵害或阻止應逮捕之人拒捕、脫逃。(二)為避免自己或他人生命、身體、自由、財產之緊急危機時。(三)對於現在不法之侵害，而出於防衛自己或他人權利時。", w:30}
     ];
 
     let state = { type: 'fill', gs: 0, ls: 0, range: 'g', isExam: false, lastId: -1 };
@@ -156,7 +155,7 @@
                 item.keys.forEach(k => {
                     txt = txt.replace(k, `<span><input type="text" class="blank-input" data-ans="${k}" data-id="${item.id}"><span class="err-hint"></span></span>`);
                 });
-                html += `<div style="line-height:2.6;">${txt}</div>`;
+                html += `<div style="line-height:2.6; white-space:pre-wrap;">${txt}</div>`;
             } else {
                 html += `<textarea class="full-input" data-id="${item.id}" placeholder="請默寫完整內容..."></textarea>`;
             }
@@ -192,11 +191,13 @@
             } else {
                 let userTxt = ultraClean(ins[0].value);
                 item.keys.forEach(k => { if(userTxt.includes(ultraClean(k))) hit++; });
-                // 特別守則額外加分邏輯
                 if(item.id === 4 && userTxt.length > 50) hit += 1; 
             }
             let pc = Math.min(100, Math.round((hit / (state.type==='fill'?ins.length:item.keys.length)) * 100));
-            fb.innerHTML = `達成度：${pc}% ${pc===100?'✅':'❌'}`;
+            
+            // 顯示反饋內容，默寫不滿分時顯示參考答案
+            let refText = (state.type === 'dict' && pc < 100) ? `<br><br><span style="color:#666">❌ 參考答案：<br>${item.raw.replace(/{時間}|{階級}|{姓名}/g, '○○')}</span>` : "";
+            fb.innerHTML = `達成度：${pc}% ${pc===100?'✅':'❌'}${refText}`;
             fb.className = `feedback ${pc===100?'is-right':'is-wrong'}`;
             fb.style.display = 'block';
             if(pc===100) totalScore += item.w;
@@ -215,14 +216,14 @@
 
     function doSave() {
         const name = document.getElementById('user-name').value || "未命名";
-        const records = JSON.parse(localStorage.getItem('MIL_DB_130') || "[]");
+        const records = JSON.parse(localStorage.getItem('MIL_DB_131') || "[]");
         records.unshift({ n: name, g: state.gs, l: state.ls, t: new Date().toLocaleDateString() });
-        localStorage.setItem('MIL_DB_130', JSON.stringify(records.slice(0, 15)));
+        localStorage.setItem('MIL_DB_131', JSON.stringify(records.slice(0, 15)));
         showPage('page-home');
     }
 
     function renderHistory() {
-        const r = JSON.parse(localStorage.getItem('MIL_DB_130') || "[]");
+        const r = JSON.parse(localStorage.getItem('MIL_DB_131') || "[]");
         document.getElementById('history-body').innerHTML = r.map(i => `<tr><td>${i.n}</td><td>${i.g}</td><td>${i.l}</td><td>${i.t}</td></tr>`).join('');
     }
 
