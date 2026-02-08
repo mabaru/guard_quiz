@@ -3,253 +3,310 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>衛哨與時機測驗系統 v10.0</title>
+    <title>軍事衛哨與時機測驗系統 v12.4</title>
     <style>
-        :root { --primary: #2c3e50; --secondary: #27ae60; --error: #e74c3c; --accent: #f39c12; --blue: #3498db; --purple: #8e44ad; }
-        body { font-family: "Microsoft JhengHei", sans-serif; background: #f0f2f5; margin: 0; padding: 10px; display: flex; flex-direction: column; align-items: center; }
-        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 100%; max-width: 600px; margin-bottom: 15px; box-sizing: border-box; }
-        .header { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 600px; padding: 10px; }
-        .mode-toggle { background: #eee; padding: 4px; border-radius: 20px; display: flex; }
-        .m-btn { border: none; padding: 6px 15px; border-radius: 16px; cursor: pointer; font-size: 14px; background: none; transition: 0.3s; }
-        .m-btn.active { background: var(--primary); color: white; }
-        .menu-btn { width: 100%; padding: 12px; margin: 6px 0; border: none; border-radius: 8px; cursor: pointer; font-size: 15px; background: var(--primary); color: white; display: block; text-align: center; text-decoration: none; }
-        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
-        .q-title { font-weight: bold; color: #2c3e50; margin-bottom: 8px; border-left: 4px solid var(--primary); padding-left: 8px; }
-        .blank-input { border: none; border-bottom: 2px solid #95a5a6; width: 90px; text-align: center; font-size: 16px; color: var(--error); margin: 0 4px; outline: none; }
-        .full-input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-size: 16px; margin-top: 5px; }
-        .feedback { margin-top: 8px; padding: 10px; border-radius: 6px; font-size: 14px; line-height: 1.5; border: 1px solid transparent; }
-        .is-right { background: #d4edda; color: #155724; border-color: #c3e6cb; }
-        .is-wrong { background: #f8d7da; color: #721c24; border-color: #f5c6cb; }
-        .score-display { font-size: 18px; font-weight: bold; background: #fff3cd; padding: 15px; border-radius: 8px; margin-bottom: 15px; }
-        .hidden { display: none; }
-        .spec-item { display: flex; align-items: center; background: #f8f9fa; padding: 8px; border-radius: 6px; margin-bottom: 6px; font-size: 13px; }
-        .spec-item span { flex: 1; margin-right: 10px; }
-        .sm-btn { padding: 5px 10px; border: 1px solid #ccc; background: white; border-radius: 4px; cursor: pointer; font-size: 11px; margin-left: 4px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 12px; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+        :root { 
+            --primary: #2c3e50; --secondary: #27ae60; --error: #e74c3c; 
+            --accent: #f39c12; --blue: #3498db; --purple: #8e44ad; --bg: #f4f7f6;
+            --white: #ffffff;
+        }
+        body { font-family: "Microsoft JhengHei", sans-serif; background: var(--bg); margin: 0; padding: 0; color: var(--primary); }
+        
+        /* SPA 頁面切換機制 */
+        .page { display: none; width: 100%; max-width: 800px; margin: 0 auto; padding: 20px; box-sizing: border-box; }
+        .page.active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* 靜態首頁 Hero 設計 */
+        .hero { text-align: center; padding: 60px 20px; background: linear-gradient(135deg, #2c3e50 0%, #000000 100%); color: white; border-radius: 0 0 30px 30px; margin-bottom: 30px; }
+        .hero h1 { font-size: 2.2rem; margin-bottom: 10px; letter-spacing: 2px; }
+        .hero p { font-size: 1.1rem; opacity: 0.8; }
+
+        /* 卡片元件 */
+        .card { background: var(--white); padding: 25px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        
+        /* 按鈕系統 */
+        .btn { padding: 14px 24px; border: none; border-radius: 12px; cursor: pointer; font-size: 16px; font-weight: bold; transition: 0.3s; display: block; width: 100%; text-align: center; margin: 10px 0; box-sizing: border-box; text-decoration: none; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-blue { background: var(--blue); color: white; }
+        .btn-purple { background: var(--purple); color: white; }
+        .btn-secondary { background: var(--secondary); color: white; }
+        .btn-accent { background: var(--accent); color: white; }
+        .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
+        .btn:hover { opacity: 0.9; transform: translateY(-2px); }
+        .btn:active { transform: scale(0.98); }
+
+        /* 版本紀錄下拉選單 */
+        details { background: #fff; padding: 15px; border-radius: 12px; border: 1px solid #ddd; margin-top: 20px; cursor: pointer; }
+        summary { font-weight: bold; list-style: none; display: flex; justify-content: space-between; align-items: center; }
+        summary::after { content: '▼'; font-size: 12px; transition: 0.3s; }
+        details[open] summary::after { transform: rotate(180deg); }
+        .update-log-content { padding-top: 15px; font-size: 0.9rem; color: #555; line-height: 1.6; max-height: 300px; overflow-y: auto; }
+        hr { border: 0; border-top: 1px solid #eee; margin: 10px 0; }
+
+        /* 測驗題目樣式 */
+        .group-title { margin: 25px 0 10px; font-size: 1.2rem; font-weight: bold; color: var(--primary); border-left: 5px solid var(--accent); padding-left: 10px; }
+        .q-title { font-size: 1.1rem; font-weight: bold; margin-bottom: 12px; border-left: 5px solid var(--blue); padding-left: 10px; color: var(--primary); }
+        .blank-input { border: none; border-bottom: 2px solid #bdc3c7; width: 130px; text-align: center; font-size: 16px; color: var(--error); background: #fffde7; outline: none; margin: 2px; }
+        .full-input { width: 100%; padding: 15px; border: 2px solid #eee; border-radius: 10px; font-size: 16px; min-height: 120px; box-sizing: border-box; line-height: 1.6; }
+        .feedback { margin-top: 15px; padding: 15px; border-radius: 10px; line-height: 1.6; white-space: pre-wrap; display: none; }
+        .is-right { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .is-wrong { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+
+        /* 表格與紀錄 */
+        .table-container { overflow-x: auto; margin-top: 15px; }
+        table { width: 100%; border-collapse: collapse; min-width: 500px; }
+        th, td { padding: 12px; text-align: center; border-bottom: 1px solid #eee; }
+        th { background: var(--primary); color: white; }
+
+        /* 單題強化網格 */
+        .spec-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 15px; }
+        .spec-card { background: #f9f9f9; padding: 15px; border-radius: 12px; border: 1px solid #eee; }
+        .sm-btn-group { display: flex; gap: 8px; margin-top: 10px; }
+        .sm-btn { flex: 1; padding: 8px; font-size: 12px; border: 1px solid #ccc; background: white; border-radius: 6px; cursor: pointer; }
     </style>
 </head>
 <body>
 
-<div class="header">
-    <h2 id="sys-title">衛哨練習</h2>
-    <div class="mode-toggle">
-        <button id="p-mode" class="m-btn active" onclick="switchMainMode('practice')">練習模式</button>
-        <button id="e-mode" class="m-btn" onclick="switchMainMode('exam')">考試模式</button>
+<div id="page-home" class="page active">
+    <div class="hero">
+        <h1>機步三營測驗系統</h1>
+        <p>專業考核 • 智慧判定 • v12.4</p>
+    </div>
+    <div class="card">
+        <button class="btn btn-primary" onclick="showPage('page-menu')">進入系統選單</button>
+        <button class="btn btn-outline" onclick="showPage('page-history')">查看我的成績單</button>
+        
+        <details>
+            <summary>🚀 系統版本進化全紀錄</summary>
+            <div class="update-log-content">
+                <b>v12.4 (最新)</b><br>- 補全：整合 v1.0 至 v9.0 完整開發歷史紀錄。<br>- 優化：更新紀錄介面排版，加入滾動條。<br><hr>
+                <b>v12.3</b><br>- 修正：徹底拆分「衛哨守則(1-8)」與「使用時機(9-10)」獨立考試。<br><hr>
+                <b>v12.2</b><br>- 核心：加入智慧清洗功能，自動忽略標點、空格、編號對判分的影響。<br>- 優化：手機版表格顯示修正。<br><hr>
+                <b>v12.1</b><br>- 修正：練習模式默寫按鈕文字不顯示問題。<br>- 介面：版本紀錄改為下拉式收納選單。<br><hr>
+                <b>v12.0</b><br>- 重大改版：網站 SPA 化，新增靜態首頁與獨立成績管理頁面。<br>- 修正：全題目答案文本精確校對。<br><hr>
+                <b>v10.0 - v11.0</b><br>- 擴充：加入第 9-10 題武器使用時機。<br>- 功能：新增單題強化練習模式。<br>- 修正：特別守則方位與公尺數校正。<br><hr>
+                <b>v5.0 - v9.0</b><br>- 演進：導入 LocalStorage 瀏覽器儲存功能。<br>- 優化：由純文字轉為現代化卡片式佈局。<br><hr>
+                <b>v1.0 - v4.0</b><br>- 基礎：建立衛哨守則 1-7 題填空邏輯與基礎視覺風格。
+            </div>
+        </details>
     </div>
 </div>
 
-<div id="main-menu" class="card">
-    <div id="menu-content"></div>
-
-    <div id="difficulty-level" class="hidden">
-        <h3 id="diff-title" style="color:var(--blue)">選擇填空難度</h3>
-        <button class="menu-btn" style="background:var(--blue)" onclick="startQuiz(0.35)">簡單 (部分挖空)</button>
-        <button class="menu-btn" style="background:#2980b9" onclick="startQuiz(0.65)">普通 (過半挖空)</button>
-        <button class="menu-btn" style="background:#1c5980" onclick="startQuiz(0.95)">困難 (幾乎默寫)</button>
-        <button class="menu-btn" style="background:#95a5a6" onclick="renderMenu()">回上一步</button>
+<div id="page-menu" class="page">
+    <div class="card">
+        <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+            <button id="tab-p" class="btn btn-primary" style="flex:1" onclick="toggleMode('practice')">練習模式</button>
+            <button id="tab-e" class="btn btn-outline" style="flex:1" onclick="toggleMode('exam')">考試模式</button>
+        </div>
+        <div id="mode-btns"></div>
+        <button class="btn btn-outline" style="margin-top:20px;" onclick="showPage('page-home')">返回首頁</button>
     </div>
-
-    <div id="practice-extra">
-        <hr>
-        <h3>特定題目精修</h3>
-        <div id="specific-list"></div>
+    
+    <div class="card">
+        <h3>🎯 單題強化練習</h3>
+        <div class="spec-grid" id="spec-list"></div>
     </div>
-
-    <hr>
-    <h3>歷史成績單</h3>
-    <table>
-        <thead><tr><th>姓名</th><th>衛哨分</th><th>法律分</th><th>日期</th></tr></thead>
-        <tbody id="history-body"></tbody>
-    </table>
 </div>
 
-<div id="quiz-area" class="card hidden">
-    <div id="quiz-list"></div>
-    <div id="result-container" class="hidden">
-        <div id="score-report" class="score-display"></div>
-        <input type="text" id="user-name" class="full-input" placeholder="輸入姓名儲存成績">
-        <button class="menu-btn" style="background:var(--secondary)" onclick="saveScoreRecord()">儲存紀錄並返回</button>
+<div id="page-quiz" class="page">
+    <div class="card">
+        <div id="quiz-content"></div>
+        <div id="quiz-footer">
+            <button id="btn-submit" class="btn btn-secondary">送出答案</button>
+            <button id="btn-retry" class="btn btn-accent" style="display:none">再試一次</button>
+            <div id="save-box" style="display:none">
+                <input type="text" id="user-name" class="full-input" style="min-height:45px; margin-bottom:10px" placeholder="請輸入姓名以紀錄成績">
+                <button class="btn btn-secondary" onclick="doSave()">儲存成績並返回</button>
+            </div>
+            <button class="btn btn-outline" onclick="showPage('page-menu')">放棄返回</button>
+        </div>
     </div>
-    <div id="action-btns" style="display: flex; gap: 10px; margin-top: 15px;">
-        <button id="submit-btn" class="menu-btn" style="background:var(--secondary); flex: 2;">送出答案</button>
-        <button id="retry-btn" class="menu-btn hidden" style="background:var(--accent); flex: 2;">再試一次</button>
+</div>
+
+<div id="page-history" class="page">
+    <div class="card">
+        <h2>📊 我的歷史成績單</h2>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr><th>姓名</th><th>衛哨守則</th><th>使用時機</th><th>時間</th><th>操作</th></tr>
+                </thead>
+                <tbody id="history-body"></tbody>
+            </table>
+        </div>
+        <button class="btn btn-primary" style="margin-top:20px" onclick="showPage('page-home')">返回首頁</button>
     </div>
-    <button class="menu-btn" style="background:#95a5a6" onclick="location.reload()">回主選單</button>
 </div>
 
 <script>
-    const guardData = [
-        {id:1, type:"guard", q:"衛哨兵之任務為何?", keys:["維護軍紀", "保障安全", "監護", "警戒", "特定任務"], raw:"衛兵:以維護軍紀及保障安全為主。 哨兵:已執行監護警戒及特定任務為主。", w:10},
-        {id:2, type:"guard", q:"衛兵的職責為何?", keys:["內衛兵", "營舍安全", "軍紀秩序", "外衛兵", "糾察", "人車出入管制"], raw:"內衛兵:保護營舍安全，維護軍紀秩序。 外衛兵:糾察出入官兵服務儀容，查驗出入物品，執行人車出入管制，維護責任區內安全，支援鄰近衛兵。", w:10},
-        {id:3, type:"guard", q:"安全士官執掌為何?", keys:["2小時", "站姿", "4小時", "坐姿", "盤查", "戰情室", "逐級回報"], raw:"1.值勤時，2小時之衛哨採站姿值勤；4小時之衛哨採坐姿值勤。 2.值勤時熟記各項守則及管制單位人員進出，遇到可疑人物需上前盤查。 3.遇到上級長官督導，須立即通知戰情室，並由連級幹部陪同。 4.若遇狀況，應逐級回報戰情室。", w:10},
-        {id:4, type:"guard", q:"特別守則", keys:["機步一連", "安全士官", "109大樓", "107營舍", "二級場", "機步三連", "五百障礙場"], raw:"我是機步三營機步一連派遺安全士官，我的位置於109大樓一樓中廊正前方25公尺為107營舍，右方30公尺處為一營二級場，後方25公尺處為機步三連營舍，左方40公尺處為五百障礙場，報告完畢。", w:15},
-        {id:5, type:"guard", q:"一般守則", keys:["服裝整齊", "精神飽滿", "械彈攜帶", "堅守崗位", "提高警覺", "不看熱鬧", "服勤認真", "嚴格管制"], raw:"1.服裝整齊、配件光亮。2.精神飽滿、姿態端正。3.械彈攜帶、切遵規定。4.堅守崗位、嚴密搜索。5.提高警覺、時時戒備。6.不看熱鬧、注意可疑。7.服勤認真、說話客氣。8.嚴格管制、仔細查驗。", w:15},
-        {id:6, type:"guard", q:"安全士官守則", keys:["單位安全", "械彈清點", "水電管理", "就寢人數", "衛哨勤務", "可疑人物", "接聽戰情", "緊急事故"], raw:"1.負責單位安全。2.械彈清點管制。3.嚴密水電管理。4.清點就寢人數。5.巡視衛哨勤務。6.注意可疑人物。7.接聽戰情電話。8.反應緊急事故。", w:15},
-        {id:7, type:"guard", q:"情報傳遞", keys:["何人", "何時", "何地", "何事", "為何"], raw:"何人、何時、何地、何事、為何。", w:15},
-        {id:8, type:"guard", q:"衛哨兵之定義為何?", keys:["營區內", "警戒任務", "營區外", "警戒人員"], raw:"衛兵:凡在營區內之地區，擔任警戒任務人員。哨兵:在營區外，擔任警戒人員。", w:10}
+    // 題目資料庫
+    const G_DATA = [
+        {id:1, type:"g", q:"1.衛哨兵之任務為何?", keys:["維護軍紀", "保障安全", "監護警戒", "特定任務"], raw:"衛兵:以維護軍紀及保障安全為主。 哨兵:已執行監護警戒及特定任務為主。", w:10},
+        {id:2, type:"g", q:"2.衛兵的職責為何?", keys:["內衛兵", "營舍安全", "軍紀秩序", "外衛兵", "糾察", "人車出入管制"], raw:"內衛兵:保護營舍安全，維護軍紀秩序。 外衛兵:糾察出入官兵服務儀容，查驗出入物品，執行人車出入管制，維護責任區內安全，支援鄰近衛兵。", w:10},
+        {id:3, type:"g", q:"3.安全士官執掌為何?", keys:["2小時", "站姿", "4小時", "坐姿", "盤查", "戰情室", "單獨陪同", "適切處置", "逐級回報"], raw:"1.值勤時，2小時之衛哨採站姿值勤；4小時之衛哨採坐姿值勤。\n2.值勤時熟記各項守則及管制單位人員進出，遇到可疑人物需上前盤查。\n3.遇到上級長官督導，須立即通知戰情室，並由連級幹部陪同，不可單獨陪同\n4.若遇狀況，應依相關作業規定，適切處置，逐級回報戰情室。", w:10},
+        {id:4, type:"g", q:"4.特別守則", keys:["機步三營", "機步一連", "109大樓", "107營舍", "二級場", "機步三連", "五百障礙場"], raw:"我是機步三營機步一連派遺○○：○○安全士官○兵（士）○○○，我的位置於109大樓一樓中廊正前方25公尺為107營舍，右方30公尺處為一營二級場，後方25公尺處為機步三連營舍，左方40公尺處為五百障礙場，報告完畢。", w:15},
+        {id:5, type:"g", q:"5.一般守則", keys:["服裝整齊", "配件光亮", "精神飽滿", "姿態端正", "械彈攜帶", "堅守崗位", "嚴密搜索", "提高警覺", "不看熱鬧", "服勤認真", "嚴格管制"], raw:"1.服裝整齊、配件光亮。2.精神飽滿、姿態端正。3.械彈攜帶、切遵規定。4.堅守崗位、嚴密搜索。\n5.提高警覺、時時戒備。6.不看熱鬧、注意可疑。7.服勤認真、說話客氣。8.嚴格管制、仔細查驗。", w:15},
+        {id:6, type:"g", q:"6.安全士官守則", keys:["單位安全", "械彈清點", "水電管理", "就寢人數", "巡視衛哨", "可疑人物", "接聽戰情", "反應緊急事故"], raw:"1.負責單位安全。2.械彈清點管制。3.嚴密水電管理。4.清點就寢人數。\n5.巡視衛哨勤務。6.注意可疑人物。7.接聽戰情電話。8.反應緊急事故。", w:15},
+        {id:7, type:"g", q:"7.情報傳遞", keys:["何人", "何時", "何地", "何事", "為何"], raw:"何人、何時、何地、何事、為何。", w:15},
+        {id:8, type:"g", q:"8.衛哨兵之定義為何?", keys:["營區內", "警戒任務", "營區外", "警戒人員"], raw:"衛兵:凡在營區內之地區，擔任警戒任務人員。哨兵:在營區外，擔任警戒人員。", w:10}
     ];
 
-    const lawData = [
-        {id:9, type:"law", q:"器械使用時機", keys:["軍事安全", "遙控無人機", "設施", "機密資訊", "船", "航空器", "強暴", "滋事"], raw:"(一)為避免非常變故，維持軍事安全。(二)騷動行為足以危害軍事安全。(三)遙控無人機或其他無人機飛行物子飛越軍事營區，而有危害國防、軍事之設施或機密資訊之虞。(四)警戒、管制之場所、建築物、物品、車、船、航空器或財產遭受危害。(五)依法應逮捕之人拒捕、脫逃(六)生命、身體、自由遭受強暴、脅迫，或有事實足認為有危害之虞。(七)持有刀械而有滋事者，經告誡拋棄，仍不聽從。", w:70},
-        {id:10, type:"law", q:"武器使用時機", keys:["不足以排除侵害", "緊急危機", "現在不法之侵害", "防衛自己"], raw:"(一)前項各款之情形，使用器械不足以排除侵害或阻止應逮捕之人拒捕、脫逃。(二)為避免自己或他人生命、身體、自由、財產之緊急危機時。(三)對於現在不法之侵害，而出於防衛自己或他人權利時。", w:30}
+    const L_DATA = [
+        {id:9, type:"l", q:"9.器械使用時機(70%)", keys:["非常變故", "軍事安全", "騷動行為", "遙控無人機", "設施", "機密資訊", "遭受危害", "拒捕", "強暴", "滋事"], raw:"(一)為避免非常變故，維持軍事安全。\n(二)騷動行為足以危害軍事安全。\n(三)遙控無人機或其他無人機飛行物子飛越軍事營區，而有危害國防、軍事之設施或機密資訊之虞。\n(四)警戒、管制之場所、建築物、物品、車、船、航空器 or 財產遭受危害。\n(五)依法應逮捕之人拒捕、脫逃\n(六)生命、身體、自由遭受強暴、脅迫，或有事實足認為有危害之虞。\n(七)持有刀械而有滋事者，經告誡拋棄，仍不聽從。", w:70},
+        {id:10, type:"l", q:"10.武器使用時機(30%)", keys:["不足以排除侵害", "緊急危機", "現在不法之侵害", "防衛自己"], raw:"(一)前項各款之情形，使用器械不足以排除侵害 or 阻止應逮捕之人拒捕、脫逃。\n(二)為避免自己或他人生命、身體、自由、財產之緊急危機時。\n(三)對於現在不法之侵害，而出於防衛自己或他人權利時。", w:30}
     ];
 
-    let currentMainMode = 'practice';
-    let tempParams = {}; 
+    let state = { mode: 'practice', type: 'fill', gs: 0, ls: 0, currentRange: 'g', isExam: false };
 
-    function switchMainMode(mode) {
-        currentMainMode = mode;
-        document.getElementById('p-mode').classList.toggle('active', mode==='practice');
-        document.getElementById('e-mode').classList.toggle('active', mode==='exam');
-        document.getElementById('practice-extra').classList.toggle('hidden', mode==='exam');
-        renderMenu();
+    // 頁面切換
+    function showPage(p) {
+        document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
+        document.getElementById(p).classList.add('active');
+        if(p === 'page-history') renderHistory();
     }
 
-    function renderMenu() {
-        const container = document.getElementById('menu-content');
-        document.getElementById('difficulty-level').classList.add('hidden');
-        container.classList.remove('hidden');
+    // 選單切換 (練習/考試)
+    function toggleMode(m) {
+        state.mode = m;
+        const box = document.getElementById('mode-btns');
+        document.getElementById('tab-p').className = m==='practice'?'btn btn-primary':'btn btn-outline';
+        document.getElementById('tab-e').className = m==='exam'?'btn btn-primary':'btn btn-outline';
         
-        if (currentMainMode === 'practice') {
-            container.innerHTML = `
-                <h3>全範圍練習</h3>
-                <div class="btn-grid">
-                    <button class="menu-btn" style="background:var(--blue)" onclick="askDifficulty('fill', 'all', false)">全範圍填空</button>
-                    <button class="menu-btn" style="background:var(--purple)" onclick="startQuiz(0, 'dict', 'all', false)">全範圍默寫</button>
+        if(m === 'practice') {
+            box.innerHTML = `
+                <div class="group-title">衛哨守則練習 (1-8題)</div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                    <button class="btn btn-blue" onclick="initQuiz('fill', 'g')">填空練習</button>
+                    <button class="btn btn-purple" onclick="initQuiz('dict', 'g')">默寫練習</button>
                 </div>
-                <h3>單項練習</h3>
-                <div class="btn-grid">
-                    <button class="menu-btn" onclick="askDifficulty('fill', 'guard', false)">衛哨填空</button>
-                    <button class="menu-btn" onclick="startQuiz(0, 'dict', 'guard', false)">衛哨默寫</button>
-                    <button class="menu-btn" style="background:#455a64" onclick="askDifficulty('fill', 'law', false)">使用時機填空</button>
-                    <button class="menu-btn" style="background:#455a64" onclick="startQuiz(0, 'dict', 'law', false)">使用時機默寫</button>
+                <div class="group-title">使用時機練習 (9-10題)</div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                    <button class="btn btn-blue" onclick="initQuiz('fill', 'l')">填空練習</button>
+                    <button class="btn btn-purple" onclick="initQuiz('dict', 'l')">默寫練習</button>
                 </div>`;
         } else {
-            container.innerHTML = `
-                <h3>正式測驗 (計算成績)</h3>
-                <button class="menu-btn" style="background:#e67e22" onclick="askDifficulty('fill', 'all', true)">全範圍填空考試</button>
-                <button class="menu-btn" style="background:#d35400" onclick="startQuiz(0, 'dict', 'all', true)">全範圍默寫考試</button>
-                <div class="btn-grid">
-                    <button class="menu-btn" onclick="askDifficulty('fill', 'guard', true)">衛哨填空考</button>
-                    <button class="menu-btn" onclick="startQuiz(0, 'dict', 'guard', true)">衛哨默寫考</button>
-                    <button class="menu-btn" style="background:#c0392b" onclick="askDifficulty('fill', 'law', true)">時機填空考</button>
-                    <button class="menu-btn" style="background:#c0392b" onclick="startQuiz(0, 'dict', 'law', true)">時機默寫考</button>
-                </div>`;
+            box.innerHTML = `
+                <div class="group-title">正式考試 (獨立計分)</div>
+                <button class="btn btn-accent" onclick="initQuiz('fill', 'g', true)">1-8題 衛哨守則測驗</button>
+                <button class="btn btn-accent" onclick="initQuiz('dict', 'g', true)">1-8題 衛哨守則默寫</button>
+                <hr>
+                <button class="btn btn-secondary" onclick="initQuiz('fill', 'l', true)">9-10題 使用時機測驗</button>
+                <button class="btn btn-secondary" onclick="initQuiz('dict', 'l', true)">9-10題 使用時機默寫</button>`;
         }
     }
 
-    function askDifficulty(type, filter, isExam) {
-        tempParams = { type, filter, isExam };
-        document.getElementById('menu-content').classList.add('hidden');
-        document.getElementById('difficulty-level').classList.remove('hidden');
-    }
+    // 初始化測驗
+    function initQuiz(type, range, isExam = false, sid = -1) {
+        showPage('page-quiz');
+        state.type = type; state.isExam = isExam; state.currentRange = range;
+        const cont = document.getElementById('quiz-content');
+        cont.innerHTML = "";
+        document.getElementById('btn-retry').style.display = 'none';
+        document.getElementById('btn-submit').style.display = 'block';
+        document.getElementById('save-box').style.display = 'none';
 
-    function startQuiz(rate, type = null, filter = null, isExam = null, singleId = -1) {
-        const qType = type || tempParams.type;
-        const qFilter = filter || tempParams.filter;
-        const qIsExam = isExam !== null ? isExam : tempParams.isExam;
+        let pool = range === 'g' ? G_DATA : L_DATA;
+        let targets = sid === -1 ? pool : pool.filter(d => d.id === sid);
         
-        window.currentType = qType; window.currentIsExam = qIsExam;
-
-        document.getElementById('main-menu').classList.add('hidden');
-        document.getElementById('quiz-area').classList.remove('hidden');
-        const list = document.getElementById('quiz-list');
-        list.innerHTML = "";
-
-        let dataPool = [...guardData, ...lawData];
-        let targets = singleId !== -1 ? dataPool.filter(d => d.id === singleId) :
-                     qFilter === 'all' ? dataPool : 
-                     qFilter === 'guard' ? guardData : lawData;
-
         targets.forEach(item => {
-            let content = "";
-            if (qType === 'fill') {
-                let text = item.raw;
+            let html = `<div class="q-block" style="margin-bottom:25px;"><div class="q-title">${item.q}</div>`;
+            if(type === 'fill') {
+                let txt = item.raw;
                 item.keys.forEach(k => {
-                    if (Math.random() < rate || qIsExam) {
-                        text = text.replace(k, `<input type="text" class="blank-input" data-ans="${k}" data-id="${item.id}">`);
-                    }
+                    txt = txt.replace(k, `<input type="text" class="blank-input" data-ans="${k}" data-id="${item.id}">`);
                 });
-                content = `<div style="line-height:2.2;">${text}</div>`;
+                html += `<div style="line-height:2.2; white-space:pre-wrap;">${txt}</div>`;
             } else {
-                content = `<textarea class="full-input" rows="5" data-id="${item.id}" placeholder="請在此默寫全部內容..."></textarea>`;
+                html += `<textarea class="full-input" data-id="${item.id}" placeholder="請在此開始默寫全文..."></textarea>`;
             }
-            list.innerHTML += `<div class="q-block" style="margin-bottom:25px;"><div class="q-title">${item.q}</div>${content}<div id="fb-${item.id}" class="feedback hidden"></div></div>`;
+            html += `<div id="fb-${item.id}" class="feedback"></div></div>`;
+            cont.innerHTML += html;
         });
-        document.getElementById('submit-btn').onclick = checkAnswers;
+        document.getElementById('btn-submit').onclick = () => checkAnswers(targets);
     }
 
-    function checkAnswers() {
-        let gTotal = 0, lTotal = 0;
-        let allCorrect = true;
-        document.querySelectorAll('.q-block').forEach(block => {
-            let id = parseInt(block.querySelector('[data-id]').dataset.id);
-            let item = [...guardData, ...lawData].find(d => d.id === id);
-            let inputs = block.querySelectorAll(`[data-id="${id}"]`);
-            let score = 0;
+    // 智慧清洗函數 (忽略標點、空格、編號)
+    function clean(s) { 
+        return s.replace(/\s+/g, '').replace(/[，。；：()（）：、.．1234567890\-\(\)]/g, ''); 
+    }
 
-            if (window.currentType === 'fill') {
-                inputs.forEach(i => { if(i.value.trim() === i.dataset.ans) score++; });
+    // 判分邏輯
+    function checkAnswers(targets) {
+        let sc = 0, allCorrect = true;
+        targets.forEach(item => {
+            const fb = document.getElementById(`fb-${item.id}`);
+            const ins = document.querySelectorAll(`[data-id="${item.id}"]`);
+            let hit = 0;
+            if(state.type === 'fill') {
+                ins.forEach(i => { if(clean(i.value) === clean(i.dataset.ans)) hit++; });
             } else {
-                let val = inputs[0].value.trim();
-                item.keys.forEach(k => { if(val.includes(k)) score++; });
+                let userTxt = clean(ins[0].value);
+                item.keys.forEach(k => { if(userTxt.includes(clean(k))) hit++; });
             }
-
-            let total = window.currentType === 'fill' ? inputs.length : item.keys.length;
-            let percent = total === 0 ? 100 : Math.round((score/total)*100);
-            let fb = document.getElementById(`fb-${id}`);
-            fb.innerHTML = `<b>【達成度：${percent}%】</b><br>${percent===100 ? '✅ 正確' : '❌ 參考答案：<br>'+item.raw}`;
-            fb.className = `feedback ${percent===100 ? 'is-right' : 'is-wrong'}`;
-            fb.classList.remove('hidden');
-
-            if (percent === 100) {
-                if (item.type === 'guard') gTotal += item.w; else lTotal += item.w;
-            } else {
-                allCorrect = false;
-            }
+            let pc = Math.min(100, Math.round((hit / item.keys.length) * 100));
+            fb.innerHTML = `<b>達成度：${pc}%</b><br>${pc===100?'✅ 正確！':'❌ 參考答案：<br>'+item.raw}`;
+            fb.className = `feedback ${pc===100?'is-right':'is-wrong'}`;
+            fb.style.display = 'block';
+            if(pc===100) sc += item.w; else allCorrect = false;
         });
 
-        if (window.currentIsExam) {
-            window.finalG = gTotal; window.finalL = lTotal;
-            document.getElementById('score-report').innerHTML = `測驗結算：<br>衛哨守則分數：${gTotal} 分<br>使用時機分數：${lScore} 分`;
-            document.getElementById('result-container').classList.remove('hidden');
-            document.getElementById('submit-btn').classList.add('hidden');
-        } else if (!allCorrect && document.querySelectorAll('.q-block').length === 1) {
-            // 單題練習失敗顯示再試一次
-            document.getElementById('submit-btn').classList.add('hidden');
-            document.getElementById('retry-btn').classList.remove('hidden');
-            document.getElementById('retry-btn').onclick = () => {
-                document.querySelectorAll('.blank-input, .full-input').forEach(i => i.value = "");
-                document.querySelectorAll('.feedback').forEach(f => f.classList.add('hidden'));
-                document.getElementById('submit-btn').classList.remove('hidden');
-                document.getElementById('retry-btn').classList.add('hidden');
-            };
+        if(state.isExam) {
+            if(state.currentRange === 'g') { state.gs = sc; state.ls = 0; } else { state.ls = sc; state.gs = 0; }
+            document.getElementById('btn-submit').style.display = 'none';
+            document.getElementById('save-box').style.display = 'block';
+        } else if(!allCorrect && targets.length === 1) {
+            document.getElementById('btn-submit').style.display = 'none';
+            document.getElementById('btn-retry').style.display = 'block';
+            document.getElementById('btn-retry').onclick = () => initQuiz(state.type, state.currentRange, false, targets[0].id);
         }
     }
 
-    function saveScoreRecord() {
-        const name = document.getElementById('user-name').value || "無名英雄";
-        const records = JSON.parse(localStorage.getItem('guard_v10_scores') || "[]");
-        records.unshift({name, gScore: window.finalG, lScore: window.finalL, date: new Date().toLocaleDateString()});
-        localStorage.setItem('guard_v10_scores', JSON.stringify(records.slice(0, 10)));
-        location.reload();
+    // 儲存紀錄
+    function doSave() {
+        const name = document.getElementById('user-name').value || "未命名";
+        const records = JSON.parse(localStorage.getItem('MIL_QUIZ_FINAL') || "[]");
+        records.unshift({ n: name, g: state.gs, l: state.ls, t: new Date().toLocaleString() });
+        localStorage.setItem('MIL_QUIZ_FINAL', JSON.stringify(records.slice(0, 30)));
+        showPage('page-history');
     }
 
+    // 渲染成績單
+    function renderHistory() {
+        const records = JSON.parse(localStorage.getItem('MIL_QUIZ_FINAL') || "[]");
+        const body = document.getElementById('history-body');
+        body.innerHTML = records.map((r, i) => `
+            <tr>
+                <td>${r.n}</td>
+                <td>${r.g}</td>
+                <td>${r.l}</td>
+                <td>${r.t}</td>
+                <td><button style="color:red; border:none; background:none; cursor:pointer" onclick="delRecord(${i})">刪除</button></td>
+            </tr>
+        `).join('');
+    }
+
+    function delRecord(i) {
+        let r = JSON.parse(localStorage.getItem('MIL_QUIZ_FINAL') || "[]");
+        r.splice(i, 1);
+        localStorage.setItem('MIL_QUIZ_FINAL', JSON.stringify(r));
+        renderHistory();
+    }
+
+    // 初始化單題強化清單
     window.onload = () => {
-        switchMainMode('practice');
-        const specList = document.getElementById('specific-list');
-        [...guardData, ...lawData].forEach(item => {
-            specList.innerHTML += `
-                <div class="spec-item">
-                    <span>${item.q}</span>
-                    <button class="sm-btn" onclick="startQuiz(0.5, 'fill', 'all', false, ${item.id})">練填空</button>
-                    <button class="sm-btn" onclick="startQuiz(0, 'dict', 'all', false, ${item.id})">練默寫</button>
+        toggleMode('practice');
+        const list = document.getElementById('spec-list');
+        [...G_DATA, ...L_DATA].forEach(item => {
+            list.innerHTML += `
+                <div class="spec-card">
+                    <div style="font-weight:bold; font-size:14px; min-height:40px;">${item.q}</div>
+                    <div class="sm-btn-group">
+                        <button class="sm-btn" onclick="initQuiz('fill', '${item.type}', false, ${item.id})">練填空</button>
+                        <button class="sm-btn" onclick="initQuiz('dict', '${item.type}', false, ${item.id})">練默寫</button>
+                    </div>
                 </div>`;
         });
-        const records = JSON.parse(localStorage.getItem('guard_v10_scores') || "[]");
-        const body = document.getElementById('history-body');
-        records.forEach(r => { body.innerHTML += `<tr><td>${r.name}</td><td>${r.gScore}</td><td>${r.lScore}</td><td>${r.date}</td></tr>`; });
     };
 </script>
 </body>
