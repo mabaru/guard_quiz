@@ -3,31 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>衛哨守則-精準優化版</title>
+    <title>衛哨守則-全功能終極版</title>
     <style>
         :root { --primary: #2c3e50; --secondary: #27ae60; --error: #e74c3c; --accent: #f39c12; }
         body { font-family: "Microsoft JhengHei", sans-serif; background: #f0f2f5; margin: 0; padding: 10px; display: flex; flex-direction: column; align-items: center; }
         .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 100%; max-width: 600px; margin-bottom: 15px; box-sizing: border-box; }
         .header { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 600px; padding: 10px; }
         .mode-toggle { background: #eee; padding: 4px; border-radius: 20px; display: flex; }
-        .m-btn { border: none; padding: 6px 12px; border-radius: 16px; cursor: pointer; font-size: 14px; background: none; }
+        .m-btn { border: none; padding: 6px 15px; border-radius: 16px; cursor: pointer; font-size: 14px; background: none; transition: 0.3s; }
         .m-btn.active { background: var(--primary); color: white; }
         .menu-btn { width: 100%; padding: 12px; margin: 8px 0; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; background: var(--primary); color: white; }
         .q-title { font-weight: bold; color: #2c3e50; margin-bottom: 8px; border-left: 4px solid var(--primary); padding-left: 8px; }
         .blank-input { border: none; border-bottom: 2px solid #95a5a6; width: 100px; text-align: center; font-size: 16px; color: var(--error); margin: 0 4px; outline: none; }
         .full-input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-size: 16px; margin-top: 5px; }
-        .feedback { margin-top: 8px; padding: 10px; border-radius: 6px; font-size: 14px; line-height: 1.5; }
-        .is-right { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-        .is-wrong { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .feedback { margin-top: 8px; padding: 10px; border-radius: 6px; font-size: 14px; line-height: 1.5; border: 1px solid transparent; }
+        .is-right { background: #d4edda; color: #155724; border-color: #c3e6cb; }
+        .is-wrong { background: #f8d7da; color: #721c24; border-color: #f5c6cb; }
         .hidden { display: none; }
-        .specific-item { background: #fff; border: 1px solid #ddd; margin-bottom: 5px; padding: 10px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; font-size: 14px; }
-        .percent-tag { font-weight: bold; color: var(--accent); margin-right: 5px; }
+        .score-box { font-size: 26px; font-weight: bold; color: var(--secondary); text-align: center; margin: 15px 0; }
+        .specific-item { background: #f9f9f9; border: 1px solid #ddd; margin-bottom: 8px; padding: 10px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; font-size: 14px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; background: white; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: center; font-size: 13px; }
     </style>
 </head>
 <body>
 
 <div class="header">
-    <h2 id="sys-title">衛哨測驗</h2>
+    <h2 id="sys-title">衛哨練習模式</h2>
     <div class="mode-toggle">
         <button id="p-mode" class="m-btn active" onclick="switchMainMode('practice')">練習</button>
         <button id="e-mode" class="m-btn" onclick="switchMainMode('exam')">考試</button>
@@ -36,27 +38,49 @@
 
 <div id="main-menu" class="card">
     <div id="practice-options">
-        <h3>填空練習 (難易度)</h3>
-        <button class="menu-btn" style="background:#3498db" onclick="initQuiz('fill', 0.3)">簡單 (30% 挖空)</button>
-        <button class="menu-btn" style="background:#2980b9" onclick="initQuiz('fill', 0.6)">普通 (60% 挖空)</button>
-        <button class="menu-btn" style="background:#1c5980" onclick="initQuiz('fill', 0.9)">困難 (90% 挖空)</button>
+        <h3>填空練習 (難度)</h3>
+        <button class="menu-btn" style="background:#3498db" onclick="initQuiz('fill', 0.3, false)">簡單填空</button>
+        <button class="menu-btn" style="background:#2980b9" onclick="initQuiz('fill', 0.6, false)">普通填空</button>
+        <button class="menu-btn" style="background:#1c5980" onclick="initQuiz('fill', 0.9, false)">困難填空</button>
+        <h3>默寫練習</h3>
+        <button class="menu-btn" style="background:#8e44ad" onclick="initQuiz('dict', 0, false)">全守則默寫挑戰</button>
         <hr>
-        <h3>特定題目精修 (單題挑戰)</h3>
+        <h3>特定題目精修</h3>
         <div id="specific-list"></div>
     </div>
+
     <div id="exam-options" class="hidden">
-        <button class="menu-btn" style="background:#e67e22" onclick="initQuiz('fill', 0.6, true)">正式測驗：填空題</button>
-        <button class="menu-btn" style="background:#e67e22" onclick="initQuiz('dict', 0, true)">正式測驗：默寫題</button>
+        <h3>選擇正式測驗類型</h3>
+        <button class="menu-btn" style="background:#e67e22" onclick="initQuiz('fill', 0.3, true)">考試：填空 (簡單)</button>
+        <button class="menu-btn" style="background:#d35400" onclick="initQuiz('fill', 0.7, true)">考試：填空 (困難)</button>
+        <button class="menu-btn" style="background:#c0392b" onclick="initQuiz('dict', 0, true)">考試：全內容默寫</button>
+        <p style="font-size:12px; color:#666;">※ 考試模式會計算配分並紀錄成績</p>
     </div>
+
+    <hr>
+    <h3>歷史成績單</h3>
+    <table>
+        <thead><tr><th>姓名</th><th>分數</th><th>日期</th></tr></thead>
+        <tbody id="history-body"></tbody>
+    </table>
 </div>
 
 <div id="quiz-area" class="card hidden">
     <div id="quiz-list"></div>
+    
+    <div id="result-container" class="hidden">
+        <div id="total-score-display" class="score-box"></div>
+        <div id="save-form">
+            <input type="text" id="user-name" class="full-input" placeholder="請輸入姓名以儲存分數">
+            <button class="menu-btn" style="background:var(--secondary)" onclick="saveScoreRecord()">儲存紀錄</button>
+        </div>
+    </div>
+
     <div style="display: flex; gap: 10px;">
         <button id="submit-btn" class="menu-btn" style="background:var(--secondary); flex: 2;">送出答案</button>
         <button id="retry-btn" class="menu-btn hidden" style="background:var(--accent); flex: 2;">再試一次</button>
     </div>
-    <button class="menu-btn" style="background:#95a5a6" onclick="location.reload()">返回主選單</button>
+    <button class="menu-btn" style="background:#95a5a6" onclick="location.reload()">返回選單</button>
 </div>
 
 <script>
@@ -71,17 +95,26 @@
         {q: "衛哨兵之定義為何?", keys: ["營區內", "警戒任務", "營區外", "警戒人員"], raw: "衛兵:凡在營區內之地區，擔任警戒任務人員。哨兵:在營區外，擔任警戒人員。", w: 10}
     ];
 
-    let focusIdx = -1; 
+    let currentMainMode = 'practice';
+    let currentQuizType = '';
+    let isExam = false;
+    let finalExamScore = 0;
+    let focusSingleIdx = -1;
 
     function switchMainMode(mode) {
+        currentMainMode = mode;
         document.getElementById('p-mode').classList.toggle('active', mode==='practice');
         document.getElementById('e-mode').classList.toggle('active', mode==='exam');
         document.getElementById('practice-options').classList.toggle('hidden', mode==='exam');
         document.getElementById('exam-options').classList.toggle('hidden', mode==='practice');
+        document.getElementById('sys-title').innerText = mode === 'practice' ? '衛哨練習模式' : '衛哨正式考試';
     }
 
-    function initQuiz(type, rate, isOfficial = false, singleIdx = -1) {
-        focusIdx = singleIdx;
+    function initQuiz(type, rate, examFlag, singleIdx = -1) {
+        currentQuizType = type;
+        isExam = examFlag;
+        focusSingleIdx = singleIdx;
+        
         document.getElementById('main-menu').classList.add('hidden');
         document.getElementById('quiz-area').classList.remove('hidden');
         const list = document.getElementById('quiz-list');
@@ -95,18 +128,18 @@
             if (type === 'fill') {
                 let tempText = item.raw;
                 item.keys.forEach(k => {
-                    if (Math.random() < rate || isOfficial) {
-                        tempText = tempText.replace(k, ` <input type="text" class="blank-input" data-ans="${k}" data-q="${actualIdx}"> `);
+                    if (Math.random() < rate) {
+                        tempText = tempText.replace(k, `<input type="text" class="blank-input" data-ans="${k}" data-q="${actualIdx}">`);
                     }
                 });
-                content = `<div style="line-height:2;">${tempText}</div>`;
+                content = `<div style="line-height:2.2;">${tempText}</div>`;
             } else {
-                content = `<textarea class="full-input" rows="5" data-q="${actualIdx}" placeholder="請在此默寫全部內容..."></textarea>`;
+                content = `<textarea class="full-input" rows="4" data-q="${actualIdx}" placeholder="請在此默寫答案..."></textarea>`;
             }
 
             list.innerHTML += `
-                <div class="q-block" style="margin-bottom:20px;">
-                    <div class="q-title">${actualIdx+1}. ${item.q}</div>
+                <div class="q-block" style="margin-bottom:25px;">
+                    <div class="q-title">${actualIdx+1}. ${item.q} ${isExam ? '('+item.w+'%)' : ''}</div>
                     ${content}
                     <div id="fb-${actualIdx}" class="feedback hidden"></div>
                 </div>`;
@@ -114,58 +147,68 @@
         
         document.getElementById('submit-btn').classList.remove('hidden');
         document.getElementById('retry-btn').classList.add('hidden');
-        document.getElementById('submit-btn').onclick = () => checkAnswers(type);
+        document.getElementById('result-container').classList.add('hidden');
+        document.getElementById('submit-btn').onclick = checkAnswers;
     }
 
-    function checkAnswers(type) {
-        const targets = (focusIdx === -1) ? data.map((_, i) => i) : [focusIdx];
-        let overallCorrect = true;
+    function checkAnswers() {
+        const targets = (focusSingleIdx === -1) ? data.map((_, i) => i) : [focusSingleIdx];
+        let examTotalScore = 0;
+        let allClear = true;
 
         targets.forEach(idx => {
             const fb = document.getElementById(`fb-${idx}`);
             const inputs = document.querySelectorAll(`[data-q="${idx}"]`);
             const item = data[idx];
-            let scoreCount = 0;
-            let totalKeyCount = 0;
+            let correctKeys = 0;
+            let totalPossible = 0;
 
-            if (type === 'fill') {
-                totalKeyCount = inputs.length;
+            if (currentQuizType === 'fill') {
+                totalPossible = inputs.length;
                 inputs.forEach(input => {
-                    if (input.value.trim() === input.dataset.ans) scoreCount++;
+                    if (input.value.trim() === input.dataset.ans) correctKeys++;
                 });
             } else {
                 const userVal = inputs[0].value.trim();
-                totalKeyCount = item.keys.length;
-                item.keys.forEach(k => {
-                    if (userVal.includes(k)) scoreCount++;
-                });
+                totalPossible = item.keys.length;
+                item.keys.forEach(k => { if (userVal.includes(k)) correctKeys++; });
             }
 
-            const percent = Math.round((scoreCount / totalKeyCount) * 100);
-            const isPassed = percent === 100;
-
-            fb.innerHTML = `<b>【達成率：${percent}%】</b><br>`;
-            if (isPassed) {
-                fb.innerHTML += "✅ 完全正確！";
+            const ratio = totalPossible === 0 ? 1 : (correctKeys / totalPossible);
+            const percent = Math.round(ratio * 100);
+            
+            fb.innerHTML = `<b>【完成度：${percent}%】</b><br>`;
+            if (percent === 100) {
+                fb.innerHTML += "✅ 完美！內容完全正確。";
                 fb.className = "feedback is-right";
+                examTotalScore += item.w;
             } else {
-                fb.innerHTML += `❌ 漏掉了某些關鍵字。正確答案：<br>${item.raw}`;
+                fb.innerHTML += `❌ 漏掉部分內容。正確答案：<br>${item.raw}`;
                 fb.className = "feedback is-wrong";
-                overallCorrect = false;
+                allClear = false;
             }
             fb.classList.remove('hidden');
         });
 
-        if (!overallCorrect && focusIdx !== -1) {
+        if (isExam && focusSingleIdx === -1) {
+            finalExamScore = examTotalScore;
+            document.getElementById('total-score-display').innerText = `最終成績：${finalExamScore} 分`;
+            document.getElementById('result-container').classList.remove('hidden');
+            document.getElementById('submit-btn').classList.add('hidden');
+        } else if (!allClear && focusSingleIdx !== -1) {
+            // 特定題目練習失敗
             document.getElementById('submit-btn').classList.add('hidden');
             document.getElementById('retry-btn').classList.remove('hidden');
-            document.getElementById('retry-btn').onclick = () => {
-                document.querySelectorAll('.blank-input, .full-input').forEach(i => i.value = "");
-                document.querySelectorAll('.feedback').forEach(f => f.classList.add('hidden'));
-                document.getElementById('submit-btn').classList.remove('hidden');
-                document.getElementById('retry-btn').classList.add('hidden');
-            };
+            document.getElementById('retry-btn').onclick = () => initQuiz(currentQuizType, 0, false, focusSingleIdx);
         }
+    }
+
+    function saveScoreRecord() {
+        const name = document.getElementById('user-name').value || "無名英雄";
+        const records = JSON.parse(localStorage.getItem('guard_v6_scores') || "[]");
+        records.unshift({name, score: finalExamScore, date: new Date().toLocaleDateString()});
+        localStorage.setItem('guard_v6_scores', JSON.stringify(records.slice(0, 10)));
+        location.reload();
     }
 
     window.onload = () => {
@@ -173,9 +216,16 @@
         data.forEach((item, idx) => {
             specList.innerHTML += `
                 <div class="specific-item">
-                    <span><b>第 ${idx+1} 題：</b>${item.q}</span>
-                    <button class="m-btn active" style="font-size:12px;" onclick="initQuiz('dict', 0, false, ${idx})">默寫挑戰</button>
+                    <span style="flex:1;"><b>${idx+1}.</b> ${item.q.substring(0,12)}...</span>
+                    <button class="m-btn active" style="font-size:11px; margin-left:5px;" onclick="initQuiz('dict', 0, false, ${idx})">練默寫</button>
+                    <button class="m-btn active" style="font-size:11px; margin-left:5px; background:#16a085" onclick="initQuiz('fill', 0.6, false, ${idx})">練填空</button>
                 </div>`;
+        });
+
+        const records = JSON.parse(localStorage.getItem('guard_v6_scores') || "[]");
+        const body = document.getElementById('history-body');
+        records.forEach(r => {
+            body.innerHTML += `<tr><td>${r.name}</td><td><b>${r.score}</b></td><td>${r.date}</td></tr>`;
         });
     };
 </script>
