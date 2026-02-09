@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>軍事測驗系統 v13.4</title>
+    <title>軍事測驗系統 v13.5</title>
     <style>
         :root { --primary: #2c3e50; --secondary: #27ae60; --error: #e74c3c; --accent: #f39c12; --blue: #3498db; --purple: #8e44ad; --bg: #f4f7f6; }
         body { font-family: "Microsoft JhengHei", sans-serif; background: var(--bg); margin: 0; padding: 0; color: var(--primary); }
@@ -38,8 +38,8 @@
 
 <div id="page-home" class="page active">
     <div class="hero">
-        <h1>機步三營測驗系統 v13.4</h1>
-        <p>精簡判定優化 • 移除歷史紀錄</p>
+        <h1>機步三營測驗系統 v13.5</h1>
+        <p>修復 HTML 渲染錯誤 • 第八題判定校正</p>
     </div>
     <div class="card">
         <button class="btn btn-primary" onclick="showPage('page-menu')">開始練習/考試</button>
@@ -57,7 +57,7 @@
         <button class="btn btn-outline" onclick="showPage('page-home')">返回首頁</button>
     </div>
     <div class="card">
-        <h3>🎯 單題刷題區</h3>
+        <h3>🎯 單題訓練區</h3>
         <div class="spec-grid" id="spec-list"></div>
     </div>
 </div>
@@ -70,8 +70,8 @@
             <button id="btn-submit" class="btn btn-secondary">提交檢查</button>
             <button id="btn-retry" class="btn btn-accent" style="display:none">再練一次 (重複刷題)</button>
             <div id="save-box" style="display:none">
-                <input type="text" id="user-name" class="full-input" style="min-height:45px; margin-bottom:10px" placeholder="請輸入姓名以存檔">
-                <button class="btn btn-secondary" onclick="doSave()">儲存成績並結束</button>
+                <input type="text" id="user-name" class="full-input" style="min-height:45px; margin-bottom:10px" placeholder="請輸入姓名">
+                <button class="btn btn-secondary" onclick="doSave()">儲存並結束</button>
             </div>
             <button class="btn btn-outline" onclick="showPage('page-menu')">返回選單</button>
         </div>
@@ -95,7 +95,7 @@
         {id:2, type:"g", q:"2.衛兵的職責為何?", keys:["內衛兵", "營舍安全", "軍紀秩序", "外衛兵", "糾察", "人車出入管制"], raw:"內衛兵:保護營舍安全，維護軍紀秩序。 外衛兵:糾察出入官兵服務儀容，查驗出入物品，執行人車出入管制，維護責任區內安全，支援鄰近衛兵。", w:10},
         {id:3, type:"g", q:"3.安全士官執掌為何?", keys:["2小時", "站姿", "4小時", "坐姿", "盤查", "戰情室", "單獨陪同督導", "適切處置", "逐級回報"], raw:"1.值勤時，2小時之衛哨採站姿值勤；4小時之衛哨採坐姿值勤。2.值勤時熟記各項守則及管制單位人員進出，遇到可疑人物需上前盤查。3.遇到上級長官督導，須立即通知戰情室，並由連級幹部陪同，不可單獨陪同督導。4.若遇狀況，應依相關作業規定，適切處置，逐級回報戰情室。", w:10},
         {id:4, type:"g", q:"4.特別守則", keys:["機步一連", "109大樓", "107營舍", "二級場", "機步三連", "五百障礙場"], raw:"我是機步三營機步一連派遣{時間}安全士官{階級}{姓名}，我的位置於109大樓一樓中廊正前方25公尺為107營舍，右方30公尺處為一營二級場，後方25公尺處為機步三連營舍，左方40公尺處為五百障礙場，報告完畢。", w:15},
-        {id:5, type:"g", q:"5.一般守則", keys:["服裝整齊", "配件光亮", "精神飽滿", "姿態端正", "械彈攜帶", "切遵規定", "堅守崗位", "嚴密搜索", "提高警覺", "時時戒備", "不看熱鬧", "注意可疑", "服勤認真", "說話客氣", "嚴格管制", "仔細查驗"], raw:"1.服裝整齊、配件光亮。2.精神飽滿、姿態端正。3.械彈攜帶、切遵規定。4.堅守崗位、嚴密搜索。5.提高警覺、時時戒備。6.不看熱鬧、注意可疑。7.服勤認真、說話客氣。8.嚴格管制、仔細查驗。", w:15},
+        {id:5, type:"g", q:"5.一般守則", keys:["服裝整齊", "配件光亮", "精神飽滿", "姿態端正", "械彈攜帶", "切遵規定", "堅守崗位", "嚴密搜索", "提高警覺", "時時戒備", "不看熱鬧", "注意可疑", "服勤認真", "說話客氣", "嚴格管制", "仔細查驗"], raw:"1.服裝整齊、配件光亮。2.精神飽滿、姿態端正。3.械彈攜帶、切遵規定。4.堅守崗位、嚴密搜索。5.提高警覺、時時戒備。6.不看熱鬧、注意可疑. 7.服勤認真、說話客氣。8.嚴格管制、仔細查驗。", w:15},
         {id:6, type:"g", q:"6.安全士官守則", keys:["負責單位安全", "械彈清點管制", "嚴密水電管理", "清點就寢人數", "巡視衛哨勤務", "注意可疑人物", "接聽戰情電話", "反應緊急事故"], raw:"1.負責單位安全。2.械彈清點管制。3.嚴密水電管理。4.清點就寢人數。5.巡視衛哨勤務。6.注意可疑人物。7.接聽戰情電話。8.反應緊急事故。", w:15},
         {id:7, type:"g", q:"7.情報傳遞", keys:["何人", "何時", "何地", "何事", "為何"], raw:"何人、何時、何地、何事、為何。", w:15},
         {id:8, type:"g", q:"8.衛哨兵之定義為何?", keys:["營區內", "警戒任務人員", "營區外", "警戒任務人員"], raw:"衛兵:凡在營區內之地區，擔任警戒任務人員。哨兵:在營區外，擔任警戒任務人員。", w:10}
@@ -142,14 +142,26 @@
             let html = `<div class="q-block" style="margin-bottom:30px;"><div class="q-title">${item.q}</div>`;
             if(type === 'fill') {
                 let txt = item.raw;
+                // 修正渲染邏輯，防止 replace 造成 HTML 碎裂
                 if(item.id === 4) {
-                    txt = txt.replace(/{時間}/g, `<input type="text" class="blank-input" data-ans="ANY" placeholder="時間" data-id="4">`)
-                             .replace(/{階級}/g, `<input type="text" class="blank-input" data-ans="ANY" placeholder="階級" data-id="4">`)
-                             .replace(/{姓名}/g, `<input type="text" class="blank-input" data-ans="ANY" placeholder="姓名" data-id="4">`);
+                    txt = txt.replace("{時間}", `__TIME__`).replace("{階級}", `__RANK__`).replace("{姓名}", `__NAME__`);
                 }
-                item.keys.forEach(k => {
-                    txt = txt.replace(k, `<span><input type="text" class="blank-input" data-ans="${k}" data-id="${item.id}"><span class="err-hint"></span></span>`);
+                
+                // 先標記關鍵字位置
+                item.keys.forEach((k, idx) => {
+                    txt = txt.replace(k, `__K${idx}__`);
                 });
+
+                // 統一進行最後一次 HTML 替換
+                if(item.id === 4) {
+                    txt = txt.replace("__TIME__", `<input type="text" class="blank-input" data-ans="ANY" data-id="4" placeholder="時間">`)
+                             .replace("__RANK__", `<input type="text" class="blank-input" data-ans="ANY" data-id="4" placeholder="階級">`)
+                             .replace("__NAME__", `<input type="text" class="blank-input" data-ans="ANY" data-id="4" placeholder="姓名">`);
+                }
+                item.keys.forEach((k, idx) => {
+                    txt = txt.replace(`__K${idx}__`, `<span><input type="text" class="blank-input" data-ans="${k}" data-id="${item.id}"><span class="err-hint"></span></span>`);
+                });
+
                 html += `<div style="line-height:2.6; white-space:pre-wrap;">${txt}</div>`;
             } else {
                 html += `<textarea class="full-input" data-id="${item.id}" placeholder="請在此輸入默寫內容..."></textarea>`;
@@ -174,11 +186,11 @@
                 ins.forEach(i => {
                     let u = i.value.trim();
                     let a = i.dataset.ans;
-                    // 第八題特殊邏輯：警戒任務人員/警戒任務/警戒人員 皆算對
                     let ok = false;
                     if(a === "ANY") {
                         ok = u.length > 0;
                     } else if(item.id === 8 && a === "警戒任務人員") {
+                        // 第八題寬容比對
                         ok = u.includes("警戒任務") || u.includes("警戒人員");
                     } else {
                         ok = ultraClean(u) === ultraClean(a);
@@ -192,9 +204,7 @@
                 });
             } else {
                 let userTxt = ultraClean(ins[0].value);
-                item.keys.forEach(k => { 
-                    if(userTxt.includes(ultraClean(k))) hit++; 
-                });
+                item.keys.forEach(k => { if(userTxt.includes(ultraClean(k))) hit++; });
                 if(item.id === 4 && userTxt.length > 30) hit += 1;
             }
             let pc = Math.min(100, Math.round((hit / (state.type==='fill'?ins.length:item.keys.length)) * 100));
@@ -222,14 +232,14 @@
 
     function doSave() {
         const name = document.getElementById('user-name').value || "無名戰士";
-        const records = JSON.parse(localStorage.getItem('MIL_DB_134') || "[]");
+        const records = JSON.parse(localStorage.getItem('MIL_DB_135') || "[]");
         records.unshift({ n: name, g: state.gs, l: state.ls, t: new Date().toLocaleString() });
-        localStorage.setItem('MIL_DB_134', JSON.stringify(records.slice(0, 15)));
+        localStorage.setItem('MIL_DB_135', JSON.stringify(records.slice(0, 15)));
         showPage('page-home');
     }
 
     function renderHistory() {
-        const r = JSON.parse(localStorage.getItem('MIL_DB_134') || "[]");
+        const r = JSON.parse(localStorage.getItem('MIL_DB_135') || "[]");
         document.getElementById('history-body').innerHTML = r.map(i => `<tr><td>${i.n}</td><td>${i.g}</td><td>${i.l}</td><td>${i.t}</td></tr>`).join('');
     }
 
