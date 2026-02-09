@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>軍事測驗系統 v13.3</title>
+    <title>軍事測驗系統 v13.4</title>
     <style>
         :root { --primary: #2c3e50; --secondary: #27ae60; --error: #e74c3c; --accent: #f39c12; --blue: #3498db; --purple: #8e44ad; --bg: #f4f7f6; }
         body { font-family: "Microsoft JhengHei", sans-serif; background: var(--bg); margin: 0; padding: 0; color: var(--primary); }
@@ -20,7 +20,7 @@
         .btn-accent { background: var(--accent); color: white; }
         .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
         .q-title { font-size: 1.1rem; font-weight: bold; margin-bottom: 12px; border-left: 5px solid var(--blue); padding-left: 10px; }
-        .blank-input { border: none; border-bottom: 2px solid #bdc3c7; width: 120px; text-align: center; font-size: 16px; color: var(--error); background: #fffde7; outline: none; }
+        .blank-input { border: none; border-bottom: 2px solid #bdc3c7; width: 125px; text-align: center; font-size: 16px; color: var(--error); background: #fffde7; outline: none; }
         .blank-input.wrong { border-bottom: 2px solid var(--error); background: #ffd7d7; }
         .err-hint { font-size: 12px; color: var(--error); display: block; margin-top: -3px; font-weight: bold; }
         .full-input { width: 100%; padding: 15px; border: 2px solid #eee; border-radius: 10px; font-size: 16px; min-height: 150px; box-sizing: border-box; line-height: 1.6; }
@@ -28,30 +28,22 @@
         .is-right { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
         .is-wrong { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
         .score-display { font-size: 1.4rem; color: var(--accent); font-weight: bold; text-align: center; margin: 15px 0; padding: 10px; border: 2px dashed var(--accent); border-radius: 10px; }
-        details { background: #fff; padding: 15px; border-radius: 12px; border: 1px solid #ddd; cursor: pointer; }
-        .log-content { font-size: 0.85rem; color: #666; max-height: 150px; overflow-y: auto; padding-top: 10px; }
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
         th, td { padding: 10px; border-bottom: 1px solid #eee; text-align: center; }
         .spec-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 10px; }
+        .spec-card { background: #f9f9f9; padding: 15px; border-radius: 12px; border: 1px solid #eee; }
     </style>
 </head>
 <body>
 
 <div id="page-home" class="page active">
     <div class="hero">
-        <h1>機步三營測驗系統 v13.3</h1>
-        <p>標點符號完全容錯 • 考試分數自動結算</p>
+        <h1>機步三營測驗系統 v13.4</h1>
+        <p>精簡判定優化 • 移除歷史紀錄</p>
     </div>
     <div class="card">
         <button class="btn btn-primary" onclick="showPage('page-menu')">開始練習/考試</button>
         <button class="btn btn-outline" onclick="showPage('page-history')">查看歷史成績</button>
-        <details style="margin-top:20px;">
-            <summary>📜 更新日誌 (v1.0 - v13.3)</summary>
-            <div class="log-content">
-                <b>v13.3 (最新)</b><br>- 徹底修復：比對邏輯完全剔除標點符號，解決 88% 錯誤問題。<br>- 修正：考試結束後顯示精確總分。<br>- 修正：特別守則姓名/時間不再因字數或符號扣分。<br><hr>
-                <b>v13.2</b><br>- 新增：默寫失敗顯示參考答案。<br>- 保留：單題重複刷題按鈕。
-            </div>
-        </details>
     </div>
 </div>
 
@@ -106,12 +98,12 @@
         {id:5, type:"g", q:"5.一般守則", keys:["服裝整齊", "配件光亮", "精神飽滿", "姿態端正", "械彈攜帶", "切遵規定", "堅守崗位", "嚴密搜索", "提高警覺", "時時戒備", "不看熱鬧", "注意可疑", "服勤認真", "說話客氣", "嚴格管制", "仔細查驗"], raw:"1.服裝整齊、配件光亮。2.精神飽滿、姿態端正。3.械彈攜帶、切遵規定。4.堅守崗位、嚴密搜索。5.提高警覺、時時戒備。6.不看熱鬧、注意可疑。7.服勤認真、說話客氣。8.嚴格管制、仔細查驗。", w:15},
         {id:6, type:"g", q:"6.安全士官守則", keys:["負責單位安全", "械彈清點管制", "嚴密水電管理", "清點就寢人數", "巡視衛哨勤務", "注意可疑人物", "接聽戰情電話", "反應緊急事故"], raw:"1.負責單位安全。2.械彈清點管制。3.嚴密水電管理。4.清點就寢人數。5.巡視衛哨勤務。6.注意可疑人物。7.接聽戰情電話。8.反應緊急事故。", w:15},
         {id:7, type:"g", q:"7.情報傳遞", keys:["何人", "何時", "何地", "何事", "為何"], raw:"何人、何時、何地、何事、為何。", w:15},
-        {id:8, type:"g", q:"8.衛哨兵之定義為何?", keys:["營區內", "警戒任務", "營區外", "警戒人員"], raw:"衛兵:凡在營區內之地區，擔任警戒任務人員。哨兵:在營區外，擔任警戒人員。", w:10}
+        {id:8, type:"g", q:"8.衛哨兵之定義為何?", keys:["營區內", "警戒任務人員", "營區外", "警戒任務人員"], raw:"衛兵:凡在營區內之地區，擔任警戒任務人員。哨兵:在營區外，擔任警戒任務人員。", w:10}
     ];
 
     const L_DATA = [
-        {id:9, type:"l", q:"9.器械使用時機", keys:["非常變故", "軍事安全", "騷動行為", "遙控無人機", "設施", "機密資訊", "遭受危害", "拒捕", "強暴", "滋事"], raw:"(一)為避免非常變故，維持軍事安全。(二)騷動行為足以危害軍事安全。(三)遙控無人機或其他無人機飛行物子飛越軍事營區，而有危害國防、軍事之設施或機密資訊之虞。(四)警戒、管制之場所、建築物、物品、車、船、航空器或財產遭受危害。(五)依法應逮捕之人拒捕、脫逃(六)生命、身體、自由遭受強暴、脅迫，或有事實足認為有危害之虞。(七)持有刀械而有滋事者，經告誡拋棄，仍不聽從。", w:70},
-        {id:10, type:"l", q:"10.武器使用時機", keys:["不足以排除侵害", "緊急危機", "現在不法之侵害", "防衛自己"], raw:"(一)前項各款之情形，使用器械不足以排除侵害或阻止應逮捕之人拒捕、脫逃。(二)為避免自己或他人生命、身體、自由、財產之緊急危機時。(三)對於現在不法之侵害，而出於防衛自己或他人權利時。", w:30}
+        {id:9, type:"l", q:"9.器械使用時機", keys:["非常變故", "軍事安全", "騷動行為", "遙控無人機", "設施", "機密資訊", "遭受危害", "拒捕", "強暴", "滋事"], raw:"(一)為避免非常變故，維持軍事安全。(二)騷動行為足以危害軍事安全。(三)遙控無人機或其他無人機飛行物子飛越軍事營區，而有危害國防、軍事之設施 or 機密資訊之虞。(四)警戒、管制之場所、建築物、物品、車、船、航空器 or 財產遭受危害。(五)依法應逮捕之人拒捕、脫逃(六)生命、身體、自由遭受強暴、脅迫，或有事實足認為有危害之虞。(七)持有刀械而有滋事者，經告誡拋棄，仍不聽從。", w:70},
+        {id:10, type:"l", q:"10.武器使用時機", keys:["不足以排除侵害", "緊急危機", "現在不法之侵害", "防衛自己"], raw:"(一)前項各款之情形，使用器械不足以排除侵害 or 阻止應逮捕之人拒捕、脫逃。(二)為避免自己或他人生命、身體、自由、財產之緊急危機時。(三)對於現在不法之侵害，而出於防衛自己或他人權利時。", w:30}
     ];
 
     let state = { mode: 'practice', type: 'fill', gs: 0, ls: 0, range: 'g', isExam: false, lastId: -1 };
@@ -160,7 +152,7 @@
                 });
                 html += `<div style="line-height:2.6; white-space:pre-wrap;">${txt}</div>`;
             } else {
-                html += `<textarea class="full-input" data-id="${item.id}" placeholder="請在此輸入默寫內容，系統會自動無視標點符號..."></textarea>`;
+                html += `<textarea class="full-input" data-id="${item.id}" placeholder="請在此輸入默寫內容..."></textarea>`;
             }
             html += `<div id="fb-${item.id}" class="feedback"></div></div>`;
             cont.innerHTML += html;
@@ -169,7 +161,6 @@
     }
 
     function ultraClean(s) {
-        // 核心修正：移除所有空格、標點、換行、引號等非國字/數字元
         return s.toString().replace(/\s+/g, '').replace(/[，。；：()（）：、.．！？,!?\-\/"“”1234567890(一)(二)(三)(四)(五)(六)(七)]/g, '');
     }
 
@@ -183,7 +174,16 @@
                 ins.forEach(i => {
                     let u = i.value.trim();
                     let a = i.dataset.ans;
-                    let ok = (a === "ANY") ? (u.length > 0) : (ultraClean(u) === ultraClean(a));
+                    // 第八題特殊邏輯：警戒任務人員/警戒任務/警戒人員 皆算對
+                    let ok = false;
+                    if(a === "ANY") {
+                        ok = u.length > 0;
+                    } else if(item.id === 8 && a === "警戒任務人員") {
+                        ok = u.includes("警戒任務") || u.includes("警戒人員");
+                    } else {
+                        ok = ultraClean(u) === ultraClean(a);
+                    }
+
                     if(ok) {
                         hit++; i.classList.remove('wrong'); if(i.nextSibling) i.nextSibling.innerHTML = "";
                     } else {
@@ -195,7 +195,6 @@
                 item.keys.forEach(k => { 
                     if(userTxt.includes(ultraClean(k))) hit++; 
                 });
-                // 特別守則額外補正
                 if(item.id === 4 && userTxt.length > 30) hit += 1;
             }
             let pc = Math.min(100, Math.round((hit / (state.type==='fill'?ins.length:item.keys.length)) * 100));
@@ -223,14 +222,14 @@
 
     function doSave() {
         const name = document.getElementById('user-name').value || "無名戰士";
-        const records = JSON.parse(localStorage.getItem('MIL_DB_133') || "[]");
+        const records = JSON.parse(localStorage.getItem('MIL_DB_134') || "[]");
         records.unshift({ n: name, g: state.gs, l: state.ls, t: new Date().toLocaleString() });
-        localStorage.setItem('MIL_DB_133', JSON.stringify(records.slice(0, 15)));
+        localStorage.setItem('MIL_DB_134', JSON.stringify(records.slice(0, 15)));
         showPage('page-home');
     }
 
     function renderHistory() {
-        const r = JSON.parse(localStorage.getItem('MIL_DB_133') || "[]");
+        const r = JSON.parse(localStorage.getItem('MIL_DB_134') || "[]");
         document.getElementById('history-body').innerHTML = r.map(i => `<tr><td>${i.n}</td><td>${i.g}</td><td>${i.l}</td><td>${i.t}</td></tr>`).join('');
     }
 
