@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>軍事測驗系統 v13.6</title>
+    <title>軍事測驗系統 v13.7</title>
     <style>
         :root { --primary: #2c3e50; --secondary: #27ae60; --error: #e74c3c; --accent: #f39c12; --blue: #3498db; --bg: #f4f7f6; }
-        body { font-family: "Microsoft JhengHei", sans-serif; background: var(--bg); margin: 0; padding: 0; color: var(--primary); }
-        .page { display: none; width: 100%; max-width: 800px; margin: 0 auto; padding: 20px; box-sizing: border-box; }
+        body { font-family: "Microsoft JhengHei", sans-serif; background: var(--bg); margin: 0; padding: 0; color: var(--primary); overflow-x: hidden; }
+        .page { display: none; width: 100%; max-width: 800px; margin: 0 auto; padding: 15px; box-sizing: border-box; }
         .page.active { display: block; animation: fadeIn 0.3s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; } }
-        .hero { text-align: center; padding: 40px 20px; background: linear-gradient(135deg, #2c3e50 0%, #000000 100%); color: white; border-radius: 0 0 25px 25px; margin-bottom: 20px; }
-        .card { background: #fff; padding: 20px; border-radius: 16px; box-shadow: 0 8px 25px rgba(0,0,0,0.05); margin-bottom: 20px; }
-        .btn { padding: 12px 20px; border: none; border-radius: 10px; cursor: pointer; font-size: 16px; font-weight: bold; transition: 0.2s; display: block; width: 100%; text-align: center; margin: 8px 0; text-decoration: none; }
+        .hero { text-align: center; padding: 30px 15px; background: linear-gradient(135deg, #2c3e50 0%, #000000 100%); color: white; border-radius: 0 0 25px 25px; margin-bottom: 20px; }
+        .card { background: #fff; padding: 18px; border-radius: 16px; box-shadow: 0 8px 25px rgba(0,0,0,0.05); margin-bottom: 20px; box-sizing: border-box; }
+        .btn { padding: 12px 20px; border: none; border-radius: 10px; cursor: pointer; font-size: 16px; font-weight: bold; transition: 0.2s; display: block; width: 100%; text-align: center; margin: 8px 0; text-decoration: none; box-sizing: border-box; }
         .btn-primary { background: var(--primary); color: white; }
         .btn-blue { background: var(--blue); color: white; }
         .btn-purple { background: #8e44ad; color: white; }
@@ -20,27 +20,41 @@
         .btn-accent { background: var(--accent); color: white; }
         .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
         .q-title { font-size: 1.1rem; font-weight: bold; margin-bottom: 15px; border-left: 5px solid var(--blue); padding-left: 10px; color: var(--primary); }
-        /* 模仿截圖中的填空樣式 */
-        .blank-input { border: none; border-bottom: 2px solid #ddd; width: 80px; text-align: center; font-size: 16px; color: #d35400; background: #fffdf2; outline: none; margin: 0 2px; transition: 0.3s; }
+        
+        /* 修正輸入框溢出問題 */
+        .blank-input { 
+            border: none; 
+            border-bottom: 2px solid #ddd; 
+            max-width: 90%; /* 確保不超出螢幕 */
+            min-width: 40px;
+            text-align: center; 
+            font-size: 16px; 
+            color: #d35400; 
+            background: #fffdf2; 
+            outline: none; 
+            margin: 2px; 
+            transition: 0.3s; 
+            box-sizing: border-box;
+        }
         .blank-input:focus { border-bottom: 2px solid var(--blue); background: #f0faff; }
         .blank-input.wrong { border-bottom: 2px solid var(--error); background: #fff5f5; color: var(--error); }
         .err-hint { font-size: 11px; color: var(--error); display: block; margin-top: -2px; font-weight: bold; }
-        .feedback { margin-top: 15px; padding: 15px; border-radius: 10px; display: none; font-weight: bold; }
+        .feedback { margin-top: 15px; padding: 15px; border-radius: 10px; display: none; font-weight: bold; font-size: 14px; }
         .is-right { background: #eafff0; color: #1e7e34; border: 1px solid #c3e6cb; }
         .is-wrong { background: #fff5f5; color: #c82333; border: 1px solid #f5c6cb; }
         .score-display { font-size: 1.3rem; color: var(--accent); font-weight: bold; text-align: center; margin: 15px 0; padding: 12px; border: 2px dashed var(--accent); border-radius: 12px; }
-        .spec-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+        .spec-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
         .spec-card { background: #fafafa; padding: 15px; border-radius: 12px; border: 1px solid #eee; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 12px; border-bottom: 1px solid #eee; text-align: center; }
+        table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        th, td { padding: 10px; border-bottom: 1px solid #eee; text-align: center; }
     </style>
 </head>
 <body>
 
 <div id="page-home" class="page active">
     <div class="hero">
-        <h1>機步三營測驗系統 v13.6</h1>
-        <p>全空白默寫模式 • 保留標點格式</p>
+        <h1>機步三營測驗系統 v13.7</h1>
+        <p>修正長框溢出 • 修正第九題錯字</p>
     </div>
     <div class="card">
         <button class="btn btn-primary" onclick="showPage('page-menu')">進入測驗</button>
@@ -50,7 +64,7 @@
 
 <div id="page-menu" class="page">
     <div class="card">
-        <div style="display: flex; gap: 10px;">
+        <div style="display: flex; gap: 8px;">
             <button id="tab-p" class="btn btn-primary" style="flex:1" onclick="toggleMode('practice')">練習</button>
             <button id="tab-e" class="btn btn-outline" style="flex:1" onclick="toggleMode('exam')">考試</button>
         </div>
@@ -58,7 +72,7 @@
         <button class="btn btn-outline" onclick="showPage('page-home')">回首頁</button>
     </div>
     <div class="card">
-        <h3>🎯 單題強化區</h3>
+        <h3>🎯 單題訓練</h3>
         <div class="spec-grid" id="spec-list"></div>
     </div>
 </div>
@@ -71,7 +85,7 @@
             <button id="btn-submit" class="btn btn-secondary">檢查答案</button>
             <button id="btn-retry" class="btn btn-accent" style="display:none">再測一次</button>
             <div id="save-box" style="display:none">
-                <input type="text" id="user-name" style="width:100%; padding:12px; margin-bottom:10px; border-radius:8px; border:1px solid #ddd;" placeholder="輸入姓名儲存成績">
+                <input type="text" id="user-name" style="width:100%; padding:12px; margin-bottom:10px; border-radius:8px; border:1px solid #ddd; box-sizing: border-box;" placeholder="輸入姓名儲存成績">
                 <button class="btn btn-secondary" onclick="doSave()">儲存並離開</button>
             </div>
             <button class="btn btn-outline" onclick="showPage('page-menu')">返回選單</button>
@@ -103,7 +117,8 @@
     ];
 
     const L_DATA = [
-        {id:9, type:"l", q:"9.器械使用時機", keys:["非常變故", "軍事安全", "騷動行為", "遙控無人機", "設施", "機密資訊", "遭受危害", "拒捕", "強暴", "滋事"], raw:"(一)為避免非常變故，維持軍事安全。(二)騷動行為足以危害軍事安全。(三)遙控無人機或其他無人機飛行物子飛越軍事營區，而有危害國防、軍事之設施或機密資訊之虞。(四)警戒、管制之場所、建築物、物品、車、船、航空器或財產遭受危害。(五)依法應逮捕之人拒捕、脫逃(六)生命、身體、自由遭受強暴、脅迫，或有事實足認為有危害之虞。(七)持有刀械而有滋事者，經告誡拋棄，仍不聽從。", w:70},
+        // 修正第九題錯字：物子 -> 物體
+        {id:9, type:"l", q:"9.器械使用時機", keys:["非常變故", "軍事安全", "騷動行為", "遙控無人機", "設施", "機密資訊", "遭受危害", "拒捕", "強暴", "滋事"], raw:"(一)為避免非常變故，維持軍事安全。(二)騷動行為足以危害軍事安全。(三)遙控無人機或其他無人機飛行物體飛越軍事營區，而有危害國防、軍事之設施或機密資訊之虞。(四)警戒、管制之場所、建築物、物品、車、船、航空器或財產遭受危害。(五)依法應逮捕之人拒捕、脫逃(六)生命、身體、自由遭受強暴、脅迫，或有事實足認為有危害之虞。(七)持有刀械而有滋事者，經告誡拋棄，仍不聽從。", w:70},
         {id:10, type:"l", q:"10.武器使用時機", keys:["不足以排除侵害", "緊急危機", "現在不法之侵害", "防衛自己"], raw:"(一)前項各款之情形，使用器械不足以排除侵害或阻止應逮捕之人拒捕、脫逃。(二)為避免自己或他人生命、身體、自由、財產之緊急危機時。(三)對於現在不法之侵害，而出於防衛自己或他人權利時。", w:30}
     ];
 
@@ -144,32 +159,31 @@
             let displayHTML = "";
 
             if(type === 'fill') {
-                // 傳統填空模式：只挖關鍵字
                 let txt = item.raw;
                 if(item.id === 4) {
                     txt = txt.replace("{時間}", `__TIME__`).replace("{階級}", `__RANK__`).replace("{姓名}", `__NAME__`);
                 }
                 item.keys.forEach((k, idx) => { txt = txt.replace(k, `__K${idx}__`); });
                 
-                // 替換回輸入框
                 if(item.id === 4) {
                     txt = txt.replace("__TIME__", `<input type="text" class="blank-input" data-ans="ANY" data-id="${item.id}" style="width:60px">`)
                              .replace("__RANK__", `<input type="text" class="blank-input" data-ans="ANY" data-id="${item.id}" style="width:60px">`)
                              .replace("__NAME__", `<input type="text" class="blank-input" data-ans="ANY" data-id="${item.id}" style="width:80px">`);
                 }
                 item.keys.forEach((k, idx) => {
-                    txt = txt.replace(`__K${idx}__`, `<span><input type="text" class="blank-input" data-ans="${k}" data-id="${item.id}" style="width:${k.length*20}px"><span class="err-hint"></span></span>`);
+                    // 控制長度避免溢出
+                    let boxWidth = Math.min(k.length * 20, 280); 
+                    txt = txt.replace(`__K${idx}__`, `<span><input type="text" class="blank-input" data-ans="${k}" data-id="${item.id}" style="width:${boxWidth}px"><span class="err-hint"></span></span>`);
                 });
                 displayHTML = txt;
             } else {
-                // 全默寫模式：保留標點，挖空所有中文字
                 let raw = item.raw;
                 if(item.id === 4) raw = raw.replace("{時間}", "時間").replace("{階級}", "階級").replace("{姓名}", "姓名");
                 
-                // 正則表達式：匹配連續的中文字或英數字，但不匹配標點符號
                 displayHTML = raw.replace(/([^\s，。；：、.．？！()（）1234567890(一)(二)(三)(四)(五)(六)(七)(八)(九)(十)]+)/g, (match) => {
                     let isSpecial = (match === "時間" || match === "階級" || match === "姓名");
-                    return `<span><input type="text" class="blank-input" data-ans="${isSpecial?'ANY':match}" data-id="${item.id}" style="width:${match.length*22}px"><span class="err-hint"></span></span>`;
+                    let boxWidth = Math.min(match.length * 22, 280);
+                    return `<span><input type="text" class="blank-input" data-ans="${isSpecial?'ANY':match}" data-id="${item.id}" style="width:${boxWidth}px"><span class="err-hint"></span></span>`;
                 });
             }
 
@@ -235,14 +249,14 @@
 
     function doSave() {
         const name = document.getElementById('user-name').value || "無名戰士";
-        const records = JSON.parse(localStorage.getItem('MIL_DB_136') || "[]");
+        const records = JSON.parse(localStorage.getItem('MIL_DB_137') || "[]");
         records.unshift({ n: name, g: state.gs, l: state.ls, t: new Date().toLocaleString() });
-        localStorage.setItem('MIL_DB_136', JSON.stringify(records.slice(0, 15)));
+        localStorage.setItem('MIL_DB_137', JSON.stringify(records.slice(0, 15)));
         showPage('page-home');
     }
 
     function renderHistory() {
-        const r = JSON.parse(localStorage.getItem('MIL_DB_136') || "[]");
+        const r = JSON.parse(localStorage.getItem('MIL_DB_137') || "[]");
         document.getElementById('history-body').innerHTML = r.map(i => `<tr><td>${i.n}</td><td>${i.g}</td><td>${i.l}</td><td>${i.t}</td></tr>`).join('');
     }
 
