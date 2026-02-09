@@ -3,61 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>軍事測驗系統 v13.5</title>
+    <title>軍事測驗系統 v13.6</title>
     <style>
-        :root { --primary: #2c3e50; --secondary: #27ae60; --error: #e74c3c; --accent: #f39c12; --blue: #3498db; --purple: #8e44ad; --bg: #f4f7f6; }
+        :root { --primary: #2c3e50; --secondary: #27ae60; --error: #e74c3c; --accent: #f39c12; --blue: #3498db; --bg: #f4f7f6; }
         body { font-family: "Microsoft JhengHei", sans-serif; background: var(--bg); margin: 0; padding: 0; color: var(--primary); }
         .page { display: none; width: 100%; max-width: 800px; margin: 0 auto; padding: 20px; box-sizing: border-box; }
-        .page.active { display: block; animation: fadeIn 0.4s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; } }
-        .hero { text-align: center; padding: 50px 20px; background: linear-gradient(135deg, #2c3e50 0%, #000000 100%); color: white; border-radius: 0 0 30px 30px; margin-bottom: 25px; }
-        .card { background: #fff; padding: 25px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 20px; }
-        .btn { padding: 14px 24px; border: none; border-radius: 12px; cursor: pointer; font-size: 16px; font-weight: bold; transition: 0.3s; display: block; width: 100%; text-align: center; margin: 10px 0; }
+        .page.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; } }
+        .hero { text-align: center; padding: 40px 20px; background: linear-gradient(135deg, #2c3e50 0%, #000000 100%); color: white; border-radius: 0 0 25px 25px; margin-bottom: 20px; }
+        .card { background: #fff; padding: 20px; border-radius: 16px; box-shadow: 0 8px 25px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        .btn { padding: 12px 20px; border: none; border-radius: 10px; cursor: pointer; font-size: 16px; font-weight: bold; transition: 0.2s; display: block; width: 100%; text-align: center; margin: 8px 0; text-decoration: none; }
         .btn-primary { background: var(--primary); color: white; }
         .btn-blue { background: var(--blue); color: white; }
-        .btn-purple { background: var(--purple); color: white; }
+        .btn-purple { background: #8e44ad; color: white; }
         .btn-secondary { background: var(--secondary); color: white; }
         .btn-accent { background: var(--accent); color: white; }
         .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
-        .q-title { font-size: 1.1rem; font-weight: bold; margin-bottom: 12px; border-left: 5px solid var(--blue); padding-left: 10px; }
-        .blank-input { border: none; border-bottom: 2px solid #bdc3c7; width: 125px; text-align: center; font-size: 16px; color: var(--error); background: #fffde7; outline: none; }
-        .blank-input.wrong { border-bottom: 2px solid var(--error); background: #ffd7d7; }
-        .err-hint { font-size: 12px; color: var(--error); display: block; margin-top: -3px; font-weight: bold; }
-        .full-input { width: 100%; padding: 15px; border: 2px solid #eee; border-radius: 10px; font-size: 16px; min-height: 150px; box-sizing: border-box; line-height: 1.6; }
-        .feedback { margin-top: 15px; padding: 15px; border-radius: 10px; white-space: pre-wrap; display: none; }
-        .is-right { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-        .is-wrong { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-        .score-display { font-size: 1.4rem; color: var(--accent); font-weight: bold; text-align: center; margin: 15px 0; padding: 10px; border: 2px dashed var(--accent); border-radius: 10px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { padding: 10px; border-bottom: 1px solid #eee; text-align: center; }
-        .spec-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 10px; }
-        .spec-card { background: #f9f9f9; padding: 15px; border-radius: 12px; border: 1px solid #eee; }
+        .q-title { font-size: 1.1rem; font-weight: bold; margin-bottom: 15px; border-left: 5px solid var(--blue); padding-left: 10px; color: var(--primary); }
+        /* 模仿截圖中的填空樣式 */
+        .blank-input { border: none; border-bottom: 2px solid #ddd; width: 80px; text-align: center; font-size: 16px; color: #d35400; background: #fffdf2; outline: none; margin: 0 2px; transition: 0.3s; }
+        .blank-input:focus { border-bottom: 2px solid var(--blue); background: #f0faff; }
+        .blank-input.wrong { border-bottom: 2px solid var(--error); background: #fff5f5; color: var(--error); }
+        .err-hint { font-size: 11px; color: var(--error); display: block; margin-top: -2px; font-weight: bold; }
+        .feedback { margin-top: 15px; padding: 15px; border-radius: 10px; display: none; font-weight: bold; }
+        .is-right { background: #eafff0; color: #1e7e34; border: 1px solid #c3e6cb; }
+        .is-wrong { background: #fff5f5; color: #c82333; border: 1px solid #f5c6cb; }
+        .score-display { font-size: 1.3rem; color: var(--accent); font-weight: bold; text-align: center; margin: 15px 0; padding: 12px; border: 2px dashed var(--accent); border-radius: 12px; }
+        .spec-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+        .spec-card { background: #fafafa; padding: 15px; border-radius: 12px; border: 1px solid #eee; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px; border-bottom: 1px solid #eee; text-align: center; }
     </style>
 </head>
 <body>
 
 <div id="page-home" class="page active">
     <div class="hero">
-        <h1>機步三營測驗系統 v13.5</h1>
-        <p>修復 HTML 渲染錯誤 • 第八題判定校正</p>
+        <h1>機步三營測驗系統 v13.6</h1>
+        <p>全空白默寫模式 • 保留標點格式</p>
     </div>
     <div class="card">
-        <button class="btn btn-primary" onclick="showPage('page-menu')">開始練習/考試</button>
-        <button class="btn btn-outline" onclick="showPage('page-history')">查看歷史成績</button>
+        <button class="btn btn-primary" onclick="showPage('page-menu')">進入測驗</button>
+        <button class="btn btn-outline" onclick="showPage('page-history')">查看成績紀錄</button>
     </div>
 </div>
 
 <div id="page-menu" class="page">
     <div class="card">
         <div style="display: flex; gap: 10px;">
-            <button id="tab-p" class="btn btn-primary" style="flex:1" onclick="toggleMode('practice')">練習模式</button>
-            <button id="tab-e" class="btn btn-outline" style="flex:1" onclick="toggleMode('exam')">考試模式</button>
+            <button id="tab-p" class="btn btn-primary" style="flex:1" onclick="toggleMode('practice')">練習</button>
+            <button id="tab-e" class="btn btn-outline" style="flex:1" onclick="toggleMode('exam')">考試</button>
         </div>
         <div id="mode-btns" style="margin-top:15px;"></div>
-        <button class="btn btn-outline" onclick="showPage('page-home')">返回首頁</button>
+        <button class="btn btn-outline" onclick="showPage('page-home')">回首頁</button>
     </div>
     <div class="card">
-        <h3>🎯 單題訓練區</h3>
+        <h3>🎯 單題強化區</h3>
         <div class="spec-grid" id="spec-list"></div>
     </div>
 </div>
@@ -67,11 +68,11 @@
         <div id="exam-score-banner" class="score-display" style="display:none"></div>
         <div id="quiz-content"></div>
         <div id="quiz-footer">
-            <button id="btn-submit" class="btn btn-secondary">提交檢查</button>
-            <button id="btn-retry" class="btn btn-accent" style="display:none">再練一次 (重複刷題)</button>
+            <button id="btn-submit" class="btn btn-secondary">檢查答案</button>
+            <button id="btn-retry" class="btn btn-accent" style="display:none">再測一次</button>
             <div id="save-box" style="display:none">
-                <input type="text" id="user-name" class="full-input" style="min-height:45px; margin-bottom:10px" placeholder="請輸入姓名">
-                <button class="btn btn-secondary" onclick="doSave()">儲存並結束</button>
+                <input type="text" id="user-name" style="width:100%; padding:12px; margin-bottom:10px; border-radius:8px; border:1px solid #ddd;" placeholder="輸入姓名儲存成績">
+                <button class="btn btn-secondary" onclick="doSave()">儲存並離開</button>
             </div>
             <button class="btn btn-outline" onclick="showPage('page-menu')">返回選單</button>
         </div>
@@ -80,9 +81,9 @@
 
 <div id="page-history" class="page">
     <div class="card">
-        <h2>📊 歷史成績單</h2>
-        <table>
-            <thead><tr><th>姓名</th><th>衛哨分</th><th>時機分</th><th>日期</th></tr></thead>
+        <h2>📊 歷史紀錄</h2>
+        <table id="history-table">
+            <thead><tr><th>姓名</th><th>衛哨</th><th>時機</th><th>時間</th></tr></thead>
             <tbody id="history-body"></tbody>
         </table>
         <button class="btn btn-primary" style="margin-top:20px" onclick="showPage('page-home')">回首頁</button>
@@ -95,15 +96,15 @@
         {id:2, type:"g", q:"2.衛兵的職責為何?", keys:["內衛兵", "營舍安全", "軍紀秩序", "外衛兵", "糾察", "人車出入管制"], raw:"內衛兵:保護營舍安全，維護軍紀秩序。 外衛兵:糾察出入官兵服務儀容，查驗出入物品，執行人車出入管制，維護責任區內安全，支援鄰近衛兵。", w:10},
         {id:3, type:"g", q:"3.安全士官執掌為何?", keys:["2小時", "站姿", "4小時", "坐姿", "盤查", "戰情室", "單獨陪同督導", "適切處置", "逐級回報"], raw:"1.值勤時，2小時之衛哨採站姿值勤；4小時之衛哨採坐姿值勤。2.值勤時熟記各項守則及管制單位人員進出，遇到可疑人物需上前盤查。3.遇到上級長官督導，須立即通知戰情室，並由連級幹部陪同，不可單獨陪同督導。4.若遇狀況，應依相關作業規定，適切處置，逐級回報戰情室。", w:10},
         {id:4, type:"g", q:"4.特別守則", keys:["機步一連", "109大樓", "107營舍", "二級場", "機步三連", "五百障礙場"], raw:"我是機步三營機步一連派遣{時間}安全士官{階級}{姓名}，我的位置於109大樓一樓中廊正前方25公尺為107營舍，右方30公尺處為一營二級場，後方25公尺處為機步三連營舍，左方40公尺處為五百障礙場，報告完畢。", w:15},
-        {id:5, type:"g", q:"5.一般守則", keys:["服裝整齊", "配件光亮", "精神飽滿", "姿態端正", "械彈攜帶", "切遵規定", "堅守崗位", "嚴密搜索", "提高警覺", "時時戒備", "不看熱鬧", "注意可疑", "服勤認真", "說話客氣", "嚴格管制", "仔細查驗"], raw:"1.服裝整齊、配件光亮。2.精神飽滿、姿態端正。3.械彈攜帶、切遵規定。4.堅守崗位、嚴密搜索。5.提高警覺、時時戒備。6.不看熱鬧、注意可疑. 7.服勤認真、說話客氣。8.嚴格管制、仔細查驗。", w:15},
+        {id:5, type:"g", q:"5.一般守則", keys:["服裝整齊", "配件光亮", "精神飽滿", "姿態端正", "械彈攜帶", "切遵規定", "堅守崗位", "嚴密搜索", "提高警覺", "時時戒備", "不看熱鬧", "注意可疑", "服勤認真", "說話客氣", "嚴格管制", "仔細查驗"], raw:"1.服裝整齊、配件光亮。2.精神飽滿、姿態端正。3.械彈攜帶、切遵規定。4.堅守崗位、嚴密搜索。5.提高警覺、時時戒備。6.不看熱鬧、注意可疑。7.服勤認真、說話客氣。8.嚴格管制、仔細查驗。", w:15},
         {id:6, type:"g", q:"6.安全士官守則", keys:["負責單位安全", "械彈清點管制", "嚴密水電管理", "清點就寢人數", "巡視衛哨勤務", "注意可疑人物", "接聽戰情電話", "反應緊急事故"], raw:"1.負責單位安全。2.械彈清點管制。3.嚴密水電管理。4.清點就寢人數。5.巡視衛哨勤務。6.注意可疑人物。7.接聽戰情電話。8.反應緊急事故。", w:15},
         {id:7, type:"g", q:"7.情報傳遞", keys:["何人", "何時", "何地", "何事", "為何"], raw:"何人、何時、何地、何事、為何。", w:15},
         {id:8, type:"g", q:"8.衛哨兵之定義為何?", keys:["營區內", "警戒任務人員", "營區外", "警戒任務人員"], raw:"衛兵:凡在營區內之地區，擔任警戒任務人員。哨兵:在營區外，擔任警戒任務人員。", w:10}
     ];
 
     const L_DATA = [
-        {id:9, type:"l", q:"9.器械使用時機", keys:["非常變故", "軍事安全", "騷動行為", "遙控無人機", "設施", "機密資訊", "遭受危害", "拒捕", "強暴", "滋事"], raw:"(一)為避免非常變故，維持軍事安全。(二)騷動行為足以危害軍事安全。(三)遙控無人機或其他無人機飛行物子飛越軍事營區，而有危害國防、軍事之設施 or 機密資訊之虞。(四)警戒、管制之場所、建築物、物品、車、船、航空器 or 財產遭受危害。(五)依法應逮捕之人拒捕、脫逃(六)生命、身體、自由遭受強暴、脅迫，或有事實足認為有危害之虞。(七)持有刀械而有滋事者，經告誡拋棄，仍不聽從。", w:70},
-        {id:10, type:"l", q:"10.武器使用時機", keys:["不足以排除侵害", "緊急危機", "現在不法之侵害", "防衛自己"], raw:"(一)前項各款之情形，使用器械不足以排除侵害 or 阻止應逮捕之人拒捕、脫逃。(二)為避免自己或他人生命、身體、自由、財產之緊急危機時。(三)對於現在不法之侵害，而出於防衛自己或他人權利時。", w:30}
+        {id:9, type:"l", q:"9.器械使用時機", keys:["非常變故", "軍事安全", "騷動行為", "遙控無人機", "設施", "機密資訊", "遭受危害", "拒捕", "強暴", "滋事"], raw:"(一)為避免非常變故，維持軍事安全。(二)騷動行為足以危害軍事安全。(三)遙控無人機或其他無人機飛行物子飛越軍事營區，而有危害國防、軍事之設施或機密資訊之虞。(四)警戒、管制之場所、建築物、物品、車、船、航空器或財產遭受危害。(五)依法應逮捕之人拒捕、脫逃(六)生命、身體、自由遭受強暴、脅迫，或有事實足認為有危害之虞。(七)持有刀械而有滋事者，經告誡拋棄，仍不聽從。", w:70},
+        {id:10, type:"l", q:"10.武器使用時機", keys:["不足以排除侵害", "緊急危機", "現在不法之侵害", "防衛自己"], raw:"(一)前項各款之情形，使用器械不足以排除侵害或阻止應逮捕之人拒捕、脫逃。(二)為避免自己或他人生命、身體、自由、財產之緊急危機時。(三)對於現在不法之侵害，而出於防衛自己或他人權利時。", w:30}
     ];
 
     let state = { mode: 'practice', type: 'fill', gs: 0, ls: 0, range: 'g', isExam: false, lastId: -1 };
@@ -119,10 +120,10 @@
         const box = document.getElementById('mode-btns');
         document.getElementById('tab-p').className = m==='practice'?'btn btn-primary':'btn btn-outline';
         document.getElementById('tab-e').className = m==='exam'?'btn btn-primary':'btn btn-outline';
-        box.innerHTML = `<button class="btn btn-blue" onclick="initQuiz('fill','g',${m==='exam'})">衛哨填空</button>
-                         <button class="btn btn-purple" onclick="initQuiz('dict','g',${m==='exam'})">衛哨默寫</button><hr>
-                         <button class="btn btn-secondary" onclick="initQuiz('fill','l',${m==='exam'})">時機填空</button>
-                         <button class="btn btn-secondary" onclick="initQuiz('dict','l',${m==='exam'})">時機默寫</button>`;
+        box.innerHTML = `<button class="btn btn-blue" onclick="initQuiz('fill','g',${m==='exam'})">衛哨填空模式</button>
+                         <button class="btn btn-purple" onclick="initQuiz('dict','g',${m==='exam'})">衛哨全默寫模式</button><hr>
+                         <button class="btn btn-secondary" onclick="initQuiz('fill','l',${m==='exam'})">時機填空模式</button>
+                         <button class="btn btn-secondary" onclick="initQuiz('dict','l',${m==='exam'})">時機全默寫模式</button>`;
     }
 
     function initQuiz(type, range, isExam, sid = -1) {
@@ -140,32 +141,39 @@
 
         targets.forEach(item => {
             let html = `<div class="q-block" style="margin-bottom:30px;"><div class="q-title">${item.q}</div>`;
+            let displayHTML = "";
+
             if(type === 'fill') {
+                // 傳統填空模式：只挖關鍵字
                 let txt = item.raw;
-                // 修正渲染邏輯，防止 replace 造成 HTML 碎裂
                 if(item.id === 4) {
                     txt = txt.replace("{時間}", `__TIME__`).replace("{階級}", `__RANK__`).replace("{姓名}", `__NAME__`);
                 }
+                item.keys.forEach((k, idx) => { txt = txt.replace(k, `__K${idx}__`); });
                 
-                // 先標記關鍵字位置
-                item.keys.forEach((k, idx) => {
-                    txt = txt.replace(k, `__K${idx}__`);
-                });
-
-                // 統一進行最後一次 HTML 替換
+                // 替換回輸入框
                 if(item.id === 4) {
-                    txt = txt.replace("__TIME__", `<input type="text" class="blank-input" data-ans="ANY" data-id="4" placeholder="時間">`)
-                             .replace("__RANK__", `<input type="text" class="blank-input" data-ans="ANY" data-id="4" placeholder="階級">`)
-                             .replace("__NAME__", `<input type="text" class="blank-input" data-ans="ANY" data-id="4" placeholder="姓名">`);
+                    txt = txt.replace("__TIME__", `<input type="text" class="blank-input" data-ans="ANY" data-id="${item.id}" style="width:60px">`)
+                             .replace("__RANK__", `<input type="text" class="blank-input" data-ans="ANY" data-id="${item.id}" style="width:60px">`)
+                             .replace("__NAME__", `<input type="text" class="blank-input" data-ans="ANY" data-id="${item.id}" style="width:80px">`);
                 }
                 item.keys.forEach((k, idx) => {
-                    txt = txt.replace(`__K${idx}__`, `<span><input type="text" class="blank-input" data-ans="${k}" data-id="${item.id}"><span class="err-hint"></span></span>`);
+                    txt = txt.replace(`__K${idx}__`, `<span><input type="text" class="blank-input" data-ans="${k}" data-id="${item.id}" style="width:${k.length*20}px"><span class="err-hint"></span></span>`);
                 });
-
-                html += `<div style="line-height:2.6; white-space:pre-wrap;">${txt}</div>`;
+                displayHTML = txt;
             } else {
-                html += `<textarea class="full-input" data-id="${item.id}" placeholder="請在此輸入默寫內容..."></textarea>`;
+                // 全默寫模式：保留標點，挖空所有中文字
+                let raw = item.raw;
+                if(item.id === 4) raw = raw.replace("{時間}", "時間").replace("{階級}", "階級").replace("{姓名}", "姓名");
+                
+                // 正則表達式：匹配連續的中文字或英數字，但不匹配標點符號
+                displayHTML = raw.replace(/([^\s，。；：、.．？！()（）1234567890(一)(二)(三)(四)(五)(六)(七)(八)(九)(十)]+)/g, (match) => {
+                    let isSpecial = (match === "時間" || match === "階級" || match === "姓名");
+                    return `<span><input type="text" class="blank-input" data-ans="${isSpecial?'ANY':match}" data-id="${item.id}" style="width:${match.length*22}px"><span class="err-hint"></span></span>`;
+                });
             }
+
+            html += `<div style="line-height:2.8; white-space:pre-wrap;">${displayHTML}</div>`;
             html += `<div id="fb-${item.id}" class="feedback"></div></div>`;
             cont.innerHTML += html;
         });
@@ -177,49 +185,44 @@
     }
 
     function check(targets) {
-        let sc = 0;
+        let totalScore = 0;
         targets.forEach(item => {
             const fb = document.getElementById(`fb-${item.id}`);
             const ins = document.querySelectorAll(`[data-id="${item.id}"]`);
             let hit = 0;
-            if(state.type === 'fill') {
-                ins.forEach(i => {
-                    let u = i.value.trim();
-                    let a = i.dataset.ans;
-                    let ok = false;
-                    if(a === "ANY") {
-                        ok = u.length > 0;
-                    } else if(item.id === 8 && a === "警戒任務人員") {
-                        // 第八題寬容比對
-                        ok = u.includes("警戒任務") || u.includes("警戒人員");
-                    } else {
-                        ok = ultraClean(u) === ultraClean(a);
-                    }
+            
+            ins.forEach(i => {
+                let u = i.value.trim();
+                let a = i.dataset.ans;
+                let ok = false;
 
-                    if(ok) {
-                        hit++; i.classList.remove('wrong'); if(i.nextSibling) i.nextSibling.innerHTML = "";
-                    } else {
-                        i.classList.add('wrong'); if(i.nextSibling) i.nextSibling.innerHTML = `(❌：${u||'空'}→${a})`;
-                    }
-                });
-            } else {
-                let userTxt = ultraClean(ins[0].value);
-                item.keys.forEach(k => { if(userTxt.includes(ultraClean(k))) hit++; });
-                if(item.id === 4 && userTxt.length > 30) hit += 1;
-            }
-            let pc = Math.min(100, Math.round((hit / (state.type==='fill'?ins.length:item.keys.length)) * 100));
-            let refText = (pc < 100) ? `<br><br><span style="color:#666">❌ 參考答案：<br>${item.raw.replace(/{時間}|{階級}|{姓名}/g, '○○')}</span>` : "";
-            fb.innerHTML = `達成度：${pc}% ${pc===100?'✅':'❌'}${refText}`;
+                if(a === "ANY") {
+                    ok = u.length >= 1;
+                } else if(item.id === 8 && a === "警戒任務人員") {
+                    ok = u.includes("警戒任務") || u.includes("警戒人員");
+                } else {
+                    ok = ultraClean(u) === ultraClean(a);
+                }
+
+                if(ok) {
+                    hit++; i.classList.remove('wrong'); if(i.nextSibling) i.nextSibling.innerHTML = "";
+                } else {
+                    i.classList.add('wrong'); if(i.nextSibling) i.nextSibling.innerHTML = `(❌${a})`;
+                }
+            });
+
+            let pc = Math.round((hit / ins.length) * 100);
+            fb.innerHTML = `得分率：${pc}% ${pc===100?'✅':'❌'}`;
             fb.className = `feedback ${pc===100?'is-right':'is-wrong'}`;
             fb.style.display = 'block';
-            if(pc===100) sc += item.w;
+            if(pc === 100) totalScore += item.w;
         });
 
         if(state.isExam) {
-            state.gs = state.range === 'g' ? sc : 0;
-            state.ls = state.range === 'l' ? sc : 0;
+            state.gs = state.range === 'g' ? totalScore : 0;
+            state.ls = state.range === 'l' ? totalScore : 0;
             const banner = document.getElementById('exam-score-banner');
-            banner.innerHTML = `🎖️ 考試結算分數：${sc} 分`;
+            banner.innerHTML = `🎖️ 考試結算分數：${totalScore} 分`;
             banner.style.display = 'block';
             document.getElementById('btn-submit').style.display = 'none';
             document.getElementById('save-box').style.display = 'block';
@@ -232,14 +235,14 @@
 
     function doSave() {
         const name = document.getElementById('user-name').value || "無名戰士";
-        const records = JSON.parse(localStorage.getItem('MIL_DB_135') || "[]");
+        const records = JSON.parse(localStorage.getItem('MIL_DB_136') || "[]");
         records.unshift({ n: name, g: state.gs, l: state.ls, t: new Date().toLocaleString() });
-        localStorage.setItem('MIL_DB_135', JSON.stringify(records.slice(0, 15)));
+        localStorage.setItem('MIL_DB_136', JSON.stringify(records.slice(0, 15)));
         showPage('page-home');
     }
 
     function renderHistory() {
-        const r = JSON.parse(localStorage.getItem('MIL_DB_135') || "[]");
+        const r = JSON.parse(localStorage.getItem('MIL_DB_136') || "[]");
         document.getElementById('history-body').innerHTML = r.map(i => `<tr><td>${i.n}</td><td>${i.g}</td><td>${i.l}</td><td>${i.t}</td></tr>`).join('');
     }
 
@@ -249,7 +252,7 @@
         [...G_DATA, ...L_DATA].forEach(item => {
             list.innerHTML += `<div class="spec-card"><b>${item.q}</b><div style="display:flex; gap:8px; margin-top:10px;">
                 <button class="btn btn-blue" style="padding:5px; font-size:12px; margin:0;" onclick="initQuiz('fill','${item.type}',false,${item.id})">填空</button>
-                <button class="btn btn-purple" style="padding:5px; font-size:12px; margin:0;" onclick="initQuiz('dict','${item.type}',false,${item.id})">默寫</button>
+                <button class="btn btn-purple" style="padding:5px; font-size:12px; margin:0;" onclick="initQuiz('dict','${item.type}',false,${item.id})">全默寫</button>
             </div></div>`;
         });
     };
